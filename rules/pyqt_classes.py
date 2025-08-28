@@ -9,6 +9,15 @@ from PyQt6.QtGui import QIcon
 
 import os
 
+class pointLabel(QLabel):
+
+    def __init__(self, text = ""):
+        super().__init__(text)
+    
+    def set_points(self, points:int):
+        self.text = str(points)
+
+
 class Window(QWidget):
     def __init__(self, x = 300, y = 300, name = "My Window"):
         super().__init__()
@@ -49,6 +58,14 @@ class Window(QWidget):
         print(self.input1.text())
         print(self.input2.text())
         sys.exit()
+    
+    def add_player(self):
+        pass
+        """
+        add 5 buttons, and 2 labels
+        name, buttons, points/reputation
+        
+        """
 
 def main():
     app = QApplication(sys.argv)
