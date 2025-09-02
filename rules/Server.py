@@ -81,23 +81,48 @@
 
 import asyncio
 import websockets
+import json
 
-async def server_handler(websocket):
+
+PORT : int = 8765
+
+connected : set = set()
+
+
+async def handle_message(message) -> None:
+    message_str : str = json.loads(message)
+    
+
+async def server_handler(websocket) -> None:
     try:
+        message = await websocket.recv()
+        connected.add(websocket)
+        print("Client Connected")
         while True:
             message = await websocket.recv()
             print(f"Server received: {message}")
+            #Handle message here
             await websocket.send(f"Echo: {message}")
+
+    # Exceptions handling        
     except websockets.exceptions.ConnectionClosedOK:
         print(f"Client {websocket.remote_address} disconnected gracefully.")
     except websockets.exceptions.ConnectionClosedError as e:
         print(f"Client {websocket.remote_address} disconnected with error: {e}")
     finally:
         print(f"Cleanup for client {websocket.remote_address}.")
+        connected.remove(websocket)
+        print(connected)
 
 async def main():
-    async with websockets.serve(server_handler, "localhost", 8765):
+    print("Server Started")
+    async with websockets.serve(server_handler, "localhost", PORT):
         await asyncio.Future()  # Run forever
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        print("Starting Server...")
+        print("Listening on port: " + str(PORT))
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("Killed for Keyboard interrupts")
