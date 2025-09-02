@@ -17,8 +17,8 @@ class Window(QWidget):
         self.cur_row = 0
         self.players = {}
         self.num_player = player_num
-        abspath = "C:/Users/Mango/Desktop/Python_server_client/Python-server/"
-        self.setWindowIcon(QIcon(abspath+ "Saturn.png"))
+        # abspath = "C:/Users/Mango/Desktop/Python_server_client/Python-server/"
+        # self.setWindowIcon(QIcon(abspath+ "Saturn.png"))
         self.setWindowTitle(name)
 
     
@@ -103,8 +103,8 @@ class Window(QWidget):
 
 def main():
     app = QApplication(sys.argv)
-    abspath = "C:/Users/Mango/Desktop/Python_server_client/Python-server/"
-    set_style(app, abspath + "css_style_qwidget.css")
+    # abspath = "C:/Users/Mango/Desktop/Python_server_client/Python-server/"
+    # set_style(app, abspath + "css_style_qwidget.css")
     window = Window(x = 0 ,y = 0 ,name = " ")
     window.show()
     sys.exit(app.exec())  
