@@ -82,7 +82,7 @@
 import asyncio
 import websockets
 import json
-
+import qasync
 
 PORT : int = 8765
 
@@ -90,6 +90,7 @@ connected : set = set()
 
 
 async def handle_message(message) -> None:
+    print(message)
     message_str : str = json.loads(message)
     
 
@@ -98,11 +99,13 @@ async def server_handler(websocket) -> None:
         message = await websocket.recv()
         connected.add(websocket)
         print("Client Connected")
+        await websocket.send("CONNECTED")
         while True:
             message = await websocket.recv()
             print(f"Server received: {message}")
             #Handle message here
             await websocket.send(f"Echo: {message}")
+            print("sent")
 
     # Exceptions handling        
     except websockets.exceptions.ConnectionClosedOK:
@@ -126,3 +129,4 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("Killed for Keyboard interrupts")
+        exit()

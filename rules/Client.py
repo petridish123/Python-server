@@ -20,14 +20,7 @@ async def recieve_message(ws) -> str:
     return msg
 
 async def handle_in_and_out(websocket):
-    # input_task = asyncio.create_task(get_input(websocket))
-    # output_task = asyncio.create_task(recieve_message(websocket))
-    # done, pending = await asyncio.wait(
-    #     [input_task, output_task],
-    #     return_when=asyncio.FIRST_COMPLETED,
-    # )
-    # for task in pending:
-    #     task.cancel()
+
     await asyncio.gather(get_input(websocket),
                    recieve_message(websocket)
                    )
@@ -45,10 +38,23 @@ if __name__ == "__main__":
     try:
         asyncio.run(listen())
     except KeyboardInterrupt:
-        print("HEE HEE")
+        print("Killed for Keyboard Interrupt")
+        exit()
 
 """
 To close a connection, call ws.close()
 where ws is the websocket object
+
+create tasks and run them with threading. This is a way to cancel all the remaining tasking
+
+    # input_task = asyncio.create_task(get_input(websocket))
+    # output_task = asyncio.create_task(recieve_message(websocket))
+    # done, pending = await asyncio.wait(
+    #     [input_task, output_task],
+    #     return_when=asyncio.FIRST_COMPLETED,
+    # )
+    # for task in pending:
+    #     task.cancel()
+
 
 """
