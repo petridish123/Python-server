@@ -83,50 +83,84 @@ import asyncio
 import websockets
 import json
 import qasync
+import game
 
 PORT : int = 8765
 
-connected : set = set()
 
 
-async def handle_message(message) -> None:
-    print(message)
-    message_str : str = json.loads(message)
+class Server:
+
+    def __init__(self,):
+        self.game = game.game()
+        self.connected : set = set()
     
+    def check_round_submitted(self,) -> bool:
+        
+        return False
+    
+    def move_to_next_round(self):
+        pass
+    
+    async def add_player(self):
+        ID = self.game.make_ID()
+        new_player = game.player(None,ID,0)
+        self.game.add_player(ID, new_player)
+        return ID
 
-async def server_handler(websocket) -> None:
-    try:
-        message = await websocket.recv()
-        connected.add(websocket)
-        print("Client Connected")
-        await websocket.send("CONNECTED")
-        while True:
+    def encode_message(self, title, message):
+        new_message = {}
+        if type(title) is list and type(message) is list and len(title) == len(message):
+            for sub_title, sub_message in zip(title, message):
+                new_message[sub_title] = sub_message
+            return json.dumps(new_message).encode()
+        else:
+            return json.dumps({title: message}).encode()
+    # @qasync.asyncSlot()
+    async def handle_message(self, message) -> None:
+        print(message)
+        message_str : str = json.loads(message)
+    
+    
+    # @qasync.asyncSlot()
+    async def server_handler(self, websocket) -> None:
+        try:
             message = await websocket.recv()
-            print(f"Server received: {message}")
-            #Handle message here
-            await websocket.send(f"Echo: {message}")
-            print("sent")
+            self.connected.add(websocket)
+            new_player_id = await self.add_player()
+            await websocket.send(self.encode_message(["ID", "RESPONSE"], [new_player_id, "CONNECTED"]))
+            print("Client Connected")
 
-    # Exceptions handling        
-    except websockets.exceptions.ConnectionClosedOK:
-        print(f"Client {websocket.remote_address} disconnected gracefully.")
-    except websockets.exceptions.ConnectionClosedError as e:
-        print(f"Client {websocket.remote_address} disconnected with error: {e}")
-    finally:
-        print(f"Cleanup for client {websocket.remote_address}.")
-        connected.remove(websocket)
-        print(connected)
+            while True:
+                message = await websocket.recv()
+                print(f"Server received: {message}")
+                #Handle message here
+                await websocket.send(f"Echo: {message}")
+               
 
-async def main():
-    print("Server Started")
-    async with websockets.serve(server_handler, "localhost", PORT):
-        await asyncio.Future()  # Run forever
+        # Exceptions handling        
+        except websockets.exceptions.ConnectionClosedOK:
+            print(f"Client {websocket.remote_address} disconnected gracefully.")
+        except websockets.exceptions.ConnectionClosedError as e:
+            print(f"Client {websocket.remote_address} disconnected with error: {e}")
+        finally:
+            print(f"Cleanup for client {websocket.remote_address}.\nRemoving ID: {new_player_id}")
+            self.connected.remove(websocket)
+            self.game.remove_player(new_player_id, None)
+
+
+    # @qasync.asyncSlot()
+    async def main(self):
+        print("Server Started")
+        async with websockets.serve(self.server_handler, "localhost", PORT):
+            await asyncio.Future()  # Run forever
 
 if __name__ == "__main__":
     try:
         print("Starting Server...")
         print("Listening on port: " + str(PORT))
-        asyncio.run(main())
+        server = Server()
+        asyncio.run(server.main())
     except KeyboardInterrupt:
         print("Killed for Keyboard interrupts")
         exit()

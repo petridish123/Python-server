@@ -20,7 +20,8 @@ class player:
 
     def update_points(self,points):
         self.points = points
-        self.label.text = str(points)
+        if self.label:
+            self.label.text = str(points)
 
     def set_score_from_player(self, id :int, score : int):
         def _helper():
@@ -59,13 +60,30 @@ This is the data object
 class game:
 
     def __init__(self,):
-        self.players = {}
+        self.id_players = {}
+        self.players_id = {}
         self.num_players = 0
     
     def add_player(self, player_name : str, PLAYER : player):
-        self.players[player_name]  = PLAYER
+        self.id_players[player_name]  = PLAYER
+        self.players_id[PLAYER] = player_name
         self.num_players += 1
+
+    def make_ID(self,):
+        if self.num_players in self.id_players or self.num_players == 0:
+            new_id = self.num_players
+            while new_id in self.id_players or new_id == 0:
+                new_id += 1
+            return new_id
+        else: return self.num_players
 
     def start_game(self) -> int:
         
         return self.num_players
+    
+    def remove_player(self, player_name = None, player:player |None = None):
+        if player_name and player_name in self.id_players:
+            temp_player = self.id_players[player_name]
+            self.id_players.pop(player_name)
+            self.players_id.pop(temp_player)
+            self.num_players -= 1
