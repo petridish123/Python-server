@@ -38,6 +38,8 @@ class QtWebsocket(QWidget):
         
         self.player : player|None = None
 
+        self.players = {}
+
         self.round_allocations = {}
         self.cur_round = 0
 
@@ -68,11 +70,13 @@ class QtWebsocket(QWidget):
 
     async def handle_message(self,message):
         message_decode = json.loads(message.decode())
-
+        print(message_decode)
         if "ID" in message_decode:
             self.make_player(message_decode["ID"])
 
         if "STARTGAME" in message_decode:
+            for i in range(message["STARTGAME"]):
+                pass
             pass # Create multiple players here
 
     @asyncSlot()
@@ -80,7 +84,8 @@ class QtWebsocket(QWidget):
         self.socket = await websockets.connect("ws://localhost:8765")
         await self.socket.send(json.dumps({"REQUEST" : "CONNECT"}).encode())
         message = await self.socket.recv()
-        await self.handle_message(message)
+        print(message)
+        # await self.handle_message(message)
         while True:
             try:
                 message = await self.socket.recv()

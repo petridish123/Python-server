@@ -86,7 +86,7 @@ import qasync
 import game
 
 PORT : int = 8765
-
+NUM_PLAYERS = 2
 
 
 class Server:
@@ -94,6 +94,7 @@ class Server:
     def __init__(self,):
         self.game = game.game()
         self.connected : set = set()
+        self.game_started = False
     
     def check_round_submitted(self,) -> bool:
         
@@ -117,11 +118,14 @@ class Server:
         else:
             return json.dumps({title: message}).encode()
     # @qasync.asyncSlot()
-    async def handle_message(self, message) -> None:
+    async def handle_message(self, message,websocket) -> None:
         print(message)
         message_str : str = json.loads(message)
+        if self.game.num_players >= NUM_PLAYERS and not self.game_started:
+                    print("HEEHEE")
+                    await websocket.send(json.dumps({"STARTGAME": True, "PLAYERS":self.game.id_players}).encode())
     
-    
+
     # @qasync.asyncSlot()
     async def server_handler(self, websocket) -> None:
         try:
@@ -131,11 +135,14 @@ class Server:
             await websocket.send(self.encode_message(["ID", "RESPONSE"], [new_player_id, "CONNECTED"]))
             print("Client Connected")
 
-            while True:
+            while self.game.num_players < NUM_PLAYERS and not self.game_started:
+
                 message = await websocket.recv()
                 print(f"Server received: {message}")
                 #Handle message here
                 await websocket.send(f"Echo: {message}")
+                
+
                
 
         # Exceptions handling        

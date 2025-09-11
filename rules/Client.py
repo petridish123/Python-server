@@ -5,7 +5,9 @@ import sys
 url = "ws://localhost:8765"
 
 async def get_input(ws) ->str :
-    new_input = input("Say what? ")
+    # new_input = input("Say what? ")
+    await asyncio.sleep(3)
+    new_input = "HELLO"
     if new_input:
         await ws.send(new_input)
     else:
@@ -19,11 +21,25 @@ async def recieve_message(ws) -> str:
     print(msg)
     return msg
 
+async def cringe():
+    print("HERE")
+
 async def handle_in_and_out(websocket):
 
-    await asyncio.gather(get_input(websocket),
-                   recieve_message(websocket)
-                   )
+
+    input_task = asyncio.create_task(get_input(websocket))
+    output_task = asyncio.create_task(recieve_message(websocket))
+    done, pending = await asyncio.wait(
+        [input_task, output_task],
+        return_when=asyncio.FIRST_COMPLETED   #asyncio.FIRST_COMPLETED,
+    )
+    for task in pending:
+
+        task.cancel()
+    # await asyncio.gather(get_input(websocket),
+    #                recieve_message(websocket),
+    #                cringe(),
+    #                )
 
 async def listen():
     async with websockets.connect(url) as ws:

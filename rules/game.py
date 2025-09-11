@@ -23,15 +23,8 @@ class player:
         if self.label:
             self.label.text = str(points)
 
-    def set_score_from_player(self, id :int, score : int):
-        def _helper():
-            self.scores[self.cur_round][id] = score
-            print(self.scores)
-        return  _helper
 
-    def set_next_round(self):
-        self.cur_round += 1
-        self.scores[self.cur_round] = {}
+
     
     def get_average_from_round(self, round: int):
         if round in self.scores:
@@ -87,3 +80,69 @@ class game:
             self.id_players.pop(player_name)
             self.players_id.pop(temp_player)
             self.num_players -= 1
+
+
+from PyQt6.QtWidgets import (
+    QApplication, QWidget, QPushButton, QLabel,
+    QLineEdit, QVBoxLayout, QGridLayout
+)
+
+class sub_player:
+
+    def __init__(self, ID, layout : QGridLayout|QVBoxLayout, row : int) -> None:
+        self.current_allocation : int = 0 
+        self.scores : dict = {0:0} # for each round, append a score
+        self.layout : QGridLayout|QVBoxLayout= layout
+        self.cur_row : int= row
+        self.ID = ID
+        self.cur_round : int = 0
+
+    def add_player(self) -> None:
+        
+        label1 = QLabel("Player: " + str(self.cur_row))
+        self.layout.addWidget(label1, self.cur_row, 0)
+
+        new_label = QLabel("Points: " + str(0))
+        self.layout.addWidget(new_label, self.cur_row, 6)
+        
+
+
+        button = QPushButton("Very Negative")
+        button.setFixedWidth(100)
+        button.clicked.connect(self.set_score( -2))
+        self.layout.addWidget(button,self.cur_row,1)
+
+        button = QPushButton("Negative")
+        button.setFixedWidth(100)
+        button.clicked.connect(self.set_score(-1))
+        self.layout.addWidget(button,self.cur_row,2)
+
+        button = QPushButton("Neutral")
+        button.setFixedWidth(100)
+        button.clicked.connect(self.set_score(0))
+        self.layout.addWidget(button,self.cur_row,3)
+
+        button = QPushButton("Positive")
+        button.setFixedWidth(100)
+        button.clicked.connect(self.set_score(1))
+        self.layout.addWidget(button,self.cur_row,4)
+
+        button = QPushButton("Very Positive")
+        button.setFixedWidth(100)
+        button.clicked.connect(self.set_score(2))
+        self.layout.addWidget(button,self.cur_row,5)
+    
+    def set_score(self, amount : int):
+        def _():
+            self.current_allocation = amount
+            self.scores[self.cur_round] = amount
+        return _
+    
+    def set_round(self, round_num) -> None:
+        self.cur_round = round_num
+    
+    def increment_round(self) -> None:
+        self.set_round(self.cur_round + 1)
+    
+    def get_score(self) -> tuple:
+        return self.ID, self.current_allocation
