@@ -125,6 +125,17 @@ class Server:
                     print("HEEHEE")
                     await websocket.send(json.dumps({"STARTGAME": True, "PLAYERS":self.game.id_players}).encode())
     
+    """
+    I need two functions, one that listens and one that sends. This will allow the game to basically always be listening 
+    and processing the functions
+    """
+    async def receive_message(self, ws,id):
+
+        message = await ws.recv()
+        await self.handle_message(message.decode(), ws)
+ 
+    async def await_time(self):
+        await asyncio.sleep(1)
 
     # @qasync.asyncSlot()
     async def server_handler(self, websocket) -> None:
@@ -135,12 +146,19 @@ class Server:
             await websocket.send(self.encode_message(["ID", "RESPONSE"], [new_player_id, "CONNECTED"]))
             print("Client Connected")
 
-            while self.game.num_players < NUM_PLAYERS and not self.game_started:
+            while self.game.num_players < NUM_PLAYERS or not self.game_started:
+                # Needs to do a asyncio.wait thingy so it can cancel the task and go through!
 
-                message = await websocket.recv()
-                print(f"Server received: {message}")
+                receive_task = asyncio.create_task(self.receive_message(websocket, new_player_id))
+                wait_task = asyncio.create_task(self.await_time())
+                done, pending = await asyncio.wait([receive_task,wait_task], return_when=asyncio.FIRST_COMPLETED)
+                for task in pending:
+                    print(f'task not completed : {task}')
+                    task.cancel()
+                # message = await websocket.recv()
+                # print(f"Server received: {message}")
                 #Handle message here
-                await websocket.send(f"Echo: {message}")
+                # await websocket.send(f"Echo: {message}")
                 
 
                

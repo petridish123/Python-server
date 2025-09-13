@@ -33,7 +33,7 @@ class QtWebsocket(QWidget):
         self.setLayout(self.layout)
 
         self.button = QPushButton("Submit")
-        self.button.clicked.connect(self.send_allocation) # connect to a function
+        self.button.clicked.connect(self.send_message) # connect to a function
         self.layout.addWidget(self.button,0,0)
         
         self.player : player|None = None
