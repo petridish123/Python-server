@@ -15,6 +15,7 @@ async def handler(websocket):
             await asyncio.gather(*(client.send(message) for client in connected_clients))
 
         # Always listen for incoming messages from this client
+        print("?")
         async for msg in websocket:
             print(f"Received from client: {msg}")
 
