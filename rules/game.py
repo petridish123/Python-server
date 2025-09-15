@@ -57,12 +57,18 @@ class game:
         self.players_id = {}
         self.num_players = 0
     
-    def add_player(self, player_name : str, PLAYER : player):
+    def add_player(self, player_name : str|None = None, PLAYER : player|None = None) -> int:
+        if not player_name:
+            player_name = self.make_ID()
+        if not PLAYER:
+            PLAYER = player(None, player_name)
         self.id_players[player_name]  = PLAYER
         self.players_id[PLAYER] = player_name
         self.num_players += 1
 
-    def make_ID(self,):
+        return player_name
+
+    def make_ID(self,) -> int:
         if self.num_players in self.id_players or self.num_players == 0:
             new_id = self.num_players
             while new_id in self.id_players or new_id == 0:
