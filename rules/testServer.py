@@ -23,6 +23,7 @@ async def handler(websocket):
         print("Client disconnected")
     finally:
         connected_clients.remove(websocket)
+        
         print(f"Client removed. Total: {len(connected_clients)}")
 
 async def main():

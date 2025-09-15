@@ -22,6 +22,7 @@ class Server:
         new_player_id = self.game.add_player()
         self.ID_PLAYERS[new_player_id] = websocket
         
+        await websocket.send(json.dumps({"ID":new_player_id}).encode())
 
         try:
 
@@ -38,6 +39,8 @@ class Server:
         finally:
             self.connected.remove(websocket)
             self.game.remove_player(new_player_id)
+            for client in self.connected:
+                await client.send(json.dumps({"MINUSPLAYER" : new_player_id}).encode())
             print(f"Client removed. Total: {len(self.connected)}")
 
     async def main(self):

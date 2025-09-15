@@ -1,0 +1,17 @@
+/* Default button style */
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #eee;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* When the button is focused (e.g. after a click or via keyboard navigation) */
+button:focus {
+  background-color: green;
+  color: white;
+  outline: none; /* Optional: removes default browser outline */
+}

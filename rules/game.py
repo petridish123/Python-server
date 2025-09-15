@@ -105,7 +105,7 @@ class sub_player:
 
     def add_player(self) -> None:
         
-        label1 = QLabel("Player: " + str(self.cur_row))
+        label1 = QLabel("Player: " + str(self.ID))
         self.layout.addWidget(label1, self.cur_row, 0)
 
         new_label = QLabel("Points: " + str(0))

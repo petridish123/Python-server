@@ -108,6 +108,7 @@ def main():
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)
     window = QtWebsocket()
+    window.setStyleSheet("style.css") # this is not an absolute path :(
     window.show()
     # sys.exit(app.exec())
     with loop:
