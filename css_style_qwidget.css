@@ -1,0 +1,22 @@
+QWidget {
+    background-color:   olive;
+    color: white;
+}
+
+QLineEdit {
+    background-color: white;
+    color: black;
+}
+QLineEdit:focus{
+    background-color: bisque;
+}
+
+QPushButton {
+    font-size: 12px;
+}
+QPushButton:hover{
+    background-color: blueviolet;
+}
+QPushButton:focus{
+    background-color: blue;
+}

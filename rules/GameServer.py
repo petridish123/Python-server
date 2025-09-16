@@ -52,7 +52,7 @@ if __name__ == "__main__":
     try:
         print("Starting Server...")
         print("listening on port:",str(PORT))
-        server = Server(2)
+        server = Server(3)
         asyncio.run(server.main())
     except KeyboardInterrupt:
         print("Killed for keyboard interrupt")

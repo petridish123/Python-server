@@ -1,17 +1,15 @@
-/* Default button style */
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #eee;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+QWidget {
+    background-color:   rgb(211, 211, 188);
+    color: white;
 }
 
-/* When the button is focused (e.g. after a click or via keyboard navigation) */
-button:focus {
-  background-color: green;
-  color: white;
-  outline: none; /* Optional: removes default browser outline */
+QPushButton {
+    font-size: 12px;
+    background-color: rgb(255, 182, 87);
+}
+QPushButton:focus{
+    background-color: rgb(102, 81, 93);
+}
+QPushButton:hover{
+    background-color: rgb(125, 46, 204);
 }

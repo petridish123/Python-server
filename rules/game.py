@@ -102,42 +102,70 @@ class sub_player:
         self.cur_row : int= row
         self.ID = ID
         self.cur_round : int = 0
+        self.widgets  = []
 
     def add_player(self) -> None:
         
         label1 = QLabel("Player: " + str(self.ID))
         self.layout.addWidget(label1, self.cur_row, 0)
+        self.widgets.append(label1)
 
         new_label = QLabel("Points: " + str(0))
         self.layout.addWidget(new_label, self.cur_row, 6)
-        
+        self.widgets.append(new_label)
 
 
         button = QPushButton("Very Negative")
         button.setFixedWidth(100)
         button.clicked.connect(self.set_score( -2))
         self.layout.addWidget(button,self.cur_row,1)
+        self.widgets.append(button)
 
         button = QPushButton("Negative")
         button.setFixedWidth(100)
         button.clicked.connect(self.set_score(-1))
         self.layout.addWidget(button,self.cur_row,2)
+        self.widgets.append(button)
 
         button = QPushButton("Neutral")
         button.setFixedWidth(100)
         button.clicked.connect(self.set_score(0))
         self.layout.addWidget(button,self.cur_row,3)
+        self.widgets.append(button)
 
         button = QPushButton("Positive")
         button.setFixedWidth(100)
         button.clicked.connect(self.set_score(1))
         self.layout.addWidget(button,self.cur_row,4)
+        self.widgets.append(button)
 
         button = QPushButton("Very Positive")
         button.setFixedWidth(100)
         button.clicked.connect(self.set_score(2))
         self.layout.addWidget(button,self.cur_row,5)
+        self.widgets.append(button)
     
+    def change_row(self, new_row):
+        self.cur_row  = new_row
+        for widget in self.widgets:
+            column = self.get_widget_column(widget)
+            self.layout.removeWidget(widget)
+            self.layout.addWidget(widget,self.cur_row, column)
+    
+    def off_yerself(self):
+        for widget in self.widgets:
+            self.layout.removeWidget(widget)
+            widget.hide()
+            widget.deleteLater()
+
+    def get_widget_column(self, widget):
+        for i in range(self.layout.count()):
+            item = self.layout.itemAt(i)
+            if item.widget() == widget:
+                row, column, row_span, col_span = self.layout.getItemPosition(i)
+                return column
+        return None
+
     def set_score(self, amount : int):
         def _():
             self.current_allocation = amount

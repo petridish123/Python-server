@@ -19,10 +19,6 @@ PORT = 8765
 
 class QtWebsocket(QWidget):
 
-
-
-
-
     def __init__(self,):
         super().__init__()
         self.game_running = False
@@ -40,7 +36,7 @@ class QtWebsocket(QWidget):
         self.row = 1
         self.player : player|None = None
 
-        self.players = {}
+        self.players = {} #ID : row
 
         self.round_allocations = {}
         self.cur_round = 0
@@ -87,7 +83,25 @@ class QtWebsocket(QWidget):
                 new_player = sub_player(player_id,self.layout,self.row)
                 self.row += 1
                 new_player.add_player()
+                self.players[player_id] = new_player
             # pass # Create multiple players here
+        if "MINUSPLAYER" in message:
+            old_player = self.remove_player(message["MINUSPLAYER"])
+            old_player.off_yerself()
+            move_row  = old_player.cur_row
+            for player in self.players:
+                pl = self.players[player]
+                if pl.cur_row > move_row:
+                    print("MOVING")
+                    # pl.change_row(pl.cur_row-1)
+                else:
+                    print(f"Oldrow : {move_row} and {pl.cur_row}")
+                    
+    
+    def remove_player(self, ID):
+        old_player = self.players[ID]
+        self.players.pop(ID)
+        return old_player
 
     @asyncSlot()
     async def run(self):
@@ -107,14 +121,23 @@ def main():
     app = QApplication(sys.argv)
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)
+    set_style(app, "C:/Users/Mango/Desktop/Python_server_client/Python-server/rules/style.css")
+    set
     window = QtWebsocket()
-    window.setStyleSheet("style.css") # this is not an absolute path :(
     window.show()
     # sys.exit(app.exec())
     with loop:
         loop.run_forever()
 
+def set_style(app : QApplication, sheet : str):
+    with open(sheet, "r") as f:
+        if not f:
+            return False
+        lines = f.read()
+        # print(lines) 
         
+        app.setStyleSheet(lines)
+
 
 if __name__ == "__main__":
     main()
