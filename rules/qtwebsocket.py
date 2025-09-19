@@ -31,8 +31,14 @@ class QtWebsocket(QWidget):
         self.setLayout(self.layout)
         self.resize(200,150)
         self.button = QPushButton("Submit")
-        self.button.clicked.connect(self.send_message) # connect to a function
-        self.layout.addWidget(self.button,0,0)
+        self.button.clicked.connect(self.send_allocation) # connect to a function
+        self.layout.addWidget(self.button,0,1)
+        
+        self.round_num = 0
+        self.round_num_label = QLabel("Round: " + str(self.round_num))
+        self.layout.addWidget(self.round_num_label, 0 , 0)
+
+
         self.row = 1
         self.player : player|None = None
 
@@ -42,6 +48,10 @@ class QtWebsocket(QWidget):
         self.cur_round = 0
 
         self.run()
+
+    def change_round_num(self, new_int: int):
+        self.round_num = new_int
+        self.round_num_label.setText("Round: " + str(self.round_num))
 
     @asyncSlot()    
     async def send_message(self, message = "Hello!"):
@@ -56,6 +66,7 @@ class QtWebsocket(QWidget):
         if not self.player or not self.game_running: 
             print("Game not running or Player not created")
             return
+        self.round_allocations = {int(ID):self.players[ID].current_allocation for ID in list(self.players.keys())}
         new_message = {
             "ALLOCATION" : self.round_allocations,
             "ID" : self.player.name,
@@ -74,6 +85,7 @@ class QtWebsocket(QWidget):
             self.make_player(message["ID"])
 
         if "STARTGAME" in message:
+            self.game_running = True
             for i in range(len(message["STARTGAME"])):
                 player_id = message["STARTGAME"][i]
                 if not self.ID:
@@ -84,6 +96,7 @@ class QtWebsocket(QWidget):
                 self.row += 1
                 new_player.add_player()
                 self.players[player_id] = new_player
+            self.setWindowTitle(f"Player : {self.ID}")
             # pass # Create multiple players here
         if "MINUSPLAYER" in message:
             old_player = self.remove_player(message["MINUSPLAYER"])
@@ -96,6 +109,8 @@ class QtWebsocket(QWidget):
                     # pl.change_row(pl.cur_row-1)
                 else:
                     print(f"Oldrow : {move_row} and {pl.cur_row}")
+        if "ROUND" in message:
+            self.change_round_num(message["ROUND"])
                     
     
     def remove_player(self, ID):

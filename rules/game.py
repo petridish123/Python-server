@@ -56,6 +56,9 @@ class game:
         self.id_players = {}
         self.players_id = {}
         self.num_players = 0
+
+        self.scores = {}
+        self.round = 0
     
     def add_player(self, player_name : str|None = None, PLAYER : player|None = None) -> int:
         if not player_name:
@@ -88,6 +91,37 @@ class game:
             self.num_players -= 1
 
 
+    def new_round(self):
+        self.round += 1
+        self.scores[self.round] = {}
+    
+    def set_score(self, player_ID_from, scores,):
+        if not self.round in self.scores:
+            self.scores[self.round] = {}
+        self.scores[self.round][player_ID_from] = {}
+        for ID in scores:
+            self.scores[self.round][player_ID_from][ID] = scores[ID]
+        
+        if len(self.scores[self.round]) >= self.num_players:
+            print("all allocation collected")
+            return True
+        print(f"{len(self.scores[self.round])} / {self.num_players} collected")
+        return False
+    
+    def save(self):
+        import json
+        with open("Save.json", "w") as f:
+            f.writelines(json.dumps(self.scores))
+
+    
+
+    def calculate_cur_score(self, ID):
+        pass
+
+
+
+
+
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QPushButton, QLabel,
     QLineEdit, QVBoxLayout, QGridLayout
@@ -110,9 +144,9 @@ class sub_player:
         self.layout.addWidget(label1, self.cur_row, 0)
         self.widgets.append(label1)
 
-        new_label = QLabel("Points: " + str(0))
-        self.layout.addWidget(new_label, self.cur_row, 6)
-        self.widgets.append(new_label)
+        self.new_label = QLabel("Sentiment: Neutral")
+        self.layout.addWidget(self.new_label, self.cur_row, 6)
+        self.widgets.append(self.new_label)
 
 
         button = QPushButton("Very Negative")
@@ -170,6 +204,7 @@ class sub_player:
         def _():
             self.current_allocation = amount
             self.scores[self.cur_round] = amount
+            self.new_label.setText({-2:"Very Negative", -1:"Negative", 0:"Neutral", 1: "Positive", 2:"Very Positive"}[amount])
         return _
     
     def set_round(self, round_num) -> None:

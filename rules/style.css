@@ -1,15 +1,18 @@
 QWidget {
-    background-color:   rgb(211, 211, 188);
-    color: white;
+    background-color:   rgb(165, 165, 165);
+    color: rgb(255, 255, 255);
 }
 
-QPushButton {
+/* QPushButton {
     font-size: 12px;
     background-color: rgb(255, 182, 87);
-}
-QPushButton:focus{
+} */
+QPushButton{
     background-color: rgb(102, 81, 93);
 }
 QPushButton:hover{
     background-color: rgb(125, 46, 204);
+}
+QPushButton:visited{
+  background-color: rgb(102, 81, 93);
 }

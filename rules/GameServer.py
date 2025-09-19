@@ -13,6 +13,9 @@ class Server:
         self.url = url
         self.port = port
 
+        self.scores = {}
+        
+
     async def handler(self, websocket : websockets.ClientConnection):
         
         # Adding the connection to the connected set
@@ -29,10 +32,12 @@ class Server:
             if self.game.num_players == self.NUM_PLAYERS:
                 for ws in self.connected:
                     print(self.game.num_players)
-                    await ws.send(json.dumps({"STARTGAME" : [1,2]}).encode())
+                    await ws.send(json.dumps({"STARTGAME" : list(self.ID_PLAYERS.keys())}).encode())
 
             async for msg in websocket:
                 print(f"received message: {msg}")
+                await self.handle_message(msg)
+
 
         except websockets.exceptions.ConnectionClosed:
             print("Client disconnected")
@@ -42,6 +47,17 @@ class Server:
             for client in self.connected:
                 await client.send(json.dumps({"MINUSPLAYER" : new_player_id}).encode())
             print(f"Client removed. Total: {len(self.connected)}")
+
+    async def handle_message(self, msg):
+        msg = json.loads(msg.decode())
+        if "ID" in msg and "ALLOCATION" in msg:
+            if self.game.set_score(msg["ID"],msg["ALLOCATION"]):
+                self.game.new_round()
+                for player in self.connected:
+                    await player.send(json.dumps({"ROUND" : self.game.round}).encode())
+
+        else:
+            print(msg)
 
     async def main(self):
         async with websockets.serve(self.handler, self.url, self.port):
@@ -55,4 +71,5 @@ if __name__ == "__main__":
         server = Server(3)
         asyncio.run(server.main())
     except KeyboardInterrupt:
+        server.game.save()
         print("Killed for keyboard interrupt")
