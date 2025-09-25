@@ -5,7 +5,7 @@ PORT = 8765
 
 class Server:
 
-    def __init__(self,NUM_PLAYERS : int ,url = "localhost", port = PORT):
+    def __init__(self,NUM_PLAYERS : int  = 1 ,url : str = "localhost", port : int = PORT):
         self.connected = set()
         self.ID_PLAYERS : dict[int:websockets.ClientConnection] = {} #might be a client connection, not server
         self.NUM_PLAYERS = NUM_PLAYERS

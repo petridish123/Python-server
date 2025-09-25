@@ -1,19 +1,24 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
+from PyQt6.QtWidgets import QWidget, QMenu, QApplication
+import sys
 
-app = QApplication([])
+class MyWindow(QWidget):
+    def __init__(self,):
+        super().__init__()
 
-window = QWidget()
-layout = QVBoxLayout(window)
+        self.context = QMenu(self)
+        action1 = self.context.addAction("Action 1")
+        action2 = self.context.addAction("Action 2")
 
-btn = QPushButton("Delete me")
-layout.addWidget(btn)
 
-def delete_button():
-    layout.removeWidget(btn)
-    btn.hide()
-    btn.deleteLater()
+        self.show()
 
-btn.clicked.connect(delete_button)
+    
+    def contextMenuEvent(self,event):
+        self.context.exec(event.globalPos())
 
-window.show()
-app.exec()
+
+app = QApplication(sys.argv)
+window = MyWindow()
+sys.exit(app.exec())
+
+

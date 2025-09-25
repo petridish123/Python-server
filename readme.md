@@ -34,4 +34,6 @@ and a client script (qtwebsocket) found in the client directory.
 These three work together to create the client server connection and run the tool.
 
 When the server is opened, it waits until X amount of people are connected, where X is the set number in the script.
-When X amount are connecte...
+When X amount are connected the server then sends a start game message.
+
+In the future, this will implement a state machine, but so far this is not a feature.
