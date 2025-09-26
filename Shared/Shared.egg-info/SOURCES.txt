@@ -1,0 +1,6 @@
+game.py
+pyproject.toml
+Shared.egg-info/PKG-INFO
+Shared.egg-info/SOURCES.txt
+Shared.egg-info/dependency_links.txt
+Shared.egg-info/top_level.txt

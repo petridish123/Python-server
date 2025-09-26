@@ -22,6 +22,23 @@ Create a server from the gameserver class and give it a qt interface
 
 """
 
+class eventWindow(QWidget):
+    def __init__(self, players : dict):
+        super().__init__()
+
+        self.layout = QGridLayout()
+        self.setLayout(self.layout)
+
+        cur_row = 0
+        """
+        What I want is to get all the players and their ID's
+        Then make the events based on their IDS
+        
+        """
+
+        for ID in players:
+            """Create a row for the player. Watcher, to and from"""
+
 class QTServer(QWidget):
 
     def __init__(self, num_players : int = 1, url : str = "localhost", port : int = 8765):
@@ -29,6 +46,10 @@ class QTServer(QWidget):
 
         self.server = GameServer.Server(num_players, url, port)
         asyncio.run(self.server.main())
+
+    def create_event(self):
+        print("attempting to create event window")
+        new_window = QWidget()
 
 
 """

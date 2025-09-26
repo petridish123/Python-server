@@ -11,7 +11,9 @@ import websockets
 from qasync import QEventLoop, asyncSlot
 import asyncio
 
-from game import player, sub_player
+
+
+from Shared.game import player, sub_player
 
 url = "127.0.0.1"
 PORT = 8765
