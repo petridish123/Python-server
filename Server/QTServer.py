@@ -26,18 +26,28 @@ class eventWindow(QWidget):
     def __init__(self, players : dict):
         super().__init__()
 
-        self.layout = QGridLayout()
+        self.layout : QGridLayout = QGridLayout()
         self.setLayout(self.layout)
 
-        cur_row = 0
+        self.to_col = 1
+        self.from_col = 0
+        self.watcher_col = 2
+
+        self.cur_row = 0
         """
         What I want is to get all the players and their ID's
         Then make the events based on their IDS
         
         """
-
+        for i in range(self.from_col, self.watcher_col):
+            label = QLabel({0:"From", 1:"To", 2:"Watcher"}[i])
+            self.layout.addWidget(label, self.cur_row, i)
+        self.cur_row += 1
         for ID in players:
             """Create a row for the player. Watcher, to and from"""
+    
+    def create_row(self, ID : int):
+        for i in []
 
 class QTServer(QWidget):
 
@@ -46,6 +56,9 @@ class QTServer(QWidget):
 
         self.server = GameServer.Server(num_players, url, port)
         asyncio.run(self.server.main())
+
+        
+
 
     def create_event(self):
         print("attempting to create event window")
