@@ -1,5 +1,5 @@
-import json, asyncio, websockets, game
-
+import json, asyncio, websockets
+import Shared.game
 
 PORT = 8765
 
@@ -9,7 +9,7 @@ class Server:
         self.connected = set()
         self.ID_PLAYERS : dict[int:websockets.ClientConnection] = {} #might be a client connection, not server
         self.NUM_PLAYERS = NUM_PLAYERS
-        self.game = game.game()
+        self.game = Shared.game()
         self.url = url
         self.port = port
 
@@ -44,6 +44,7 @@ class Server:
         finally:
             self.connected.remove(websocket)
             self.game.remove_player(new_player_id)
+            self.ID_PLAYERS.pop(new_player_id)
             for client in self.connected:
                 await client.send(json.dumps({"MINUSPLAYER" : new_player_id}).encode())
             print(f"Client removed. Total: {len(self.connected)}")
@@ -60,14 +61,18 @@ class Server:
             print(msg)
 
     async def main(self):
+        print("Starting Server...")
+        print("listening on port:",str(PORT))
         async with websockets.serve(self.handler, self.url, self.port):
             await asyncio.Future()
+    
+    async def _close(self):
+        print("Closing server")
 
 
 if __name__ == "__main__":
     try:
-        print("Starting Server...")
-        print("listening on port:",str(PORT))
+
         server = Server(3)
         asyncio.run(server.main())
     except KeyboardInterrupt:

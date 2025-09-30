@@ -138,8 +138,7 @@ def main():
     app = QApplication(sys.argv)
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)
-    set_style(app, "C:/Users/Mango/Desktop/Python_server_client/Python-server/rules/style.css")
-    set
+    # set_style(app, "C:/Users/Mango/Desktop/Python_server_client/Python-server/rules/style.css")
     window = QtWebsocket()
     window.show()
     # sys.exit(app.exec())
