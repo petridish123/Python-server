@@ -41,11 +41,7 @@ class QTServer(QWidget):
         self.event_button.clicked.connect(self.create_event)
         self.layout.addWidget(self.event_button)
 
-        # QTimer.singleShot(0,self.running_task())
-        # QTimer.singleShot(0, lambda: asyncio.create_task(self.run()))
-        # while not asyncio.events.get_running_loop:
-        #     pass
-        # self.server_task = self.loop.create_task(self.run())
+
         loop.call_soon(lambda: loop.create_task(self.running_task()))
         self.server_task = None
 
@@ -57,7 +53,6 @@ class QTServer(QWidget):
     def create_event(self):
         if self.new_window is not None:
             self.new_window.close()
-            # self.new_window.deleteLater()
         print("attempting to create event window")
         self.new_window = eventWindow(self.server.ID_PLAYERS, self)
         self.new_window.show()
@@ -74,14 +69,13 @@ class QTServer(QWidget):
     
     def closeEvent(self, a0):
         print("Closing and cleaning up")
-        # await self.server._close()
         if hasattr(self.server, "_close"):
             asyncio.create_task(self.server._close())
         self.server_task.cancel()
         a0.accept()
     
     
-    # @asyncSlot()
+
     async def run(self):
         await self.server.main()
 
