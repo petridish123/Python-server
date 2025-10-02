@@ -27,9 +27,9 @@ Create a server from the gameserver class and give it a qt interface
 
 class QTServer(QWidget):
 
-    def __init__(self, num_players : int = 1, url : str = "localhost", port : int = 8765):
+    def __init__(self, num_players : int = 1, url : str = "localhost", port : int = 8765, loop : QEventLoop | None = None):
         super().__init__()
-
+        self.loop = loop
 
         self.server = Server.GameServer.Server(num_players, url, port)
         
@@ -41,7 +41,17 @@ class QTServer(QWidget):
         self.event_button.clicked.connect(self.create_event)
         self.layout.addWidget(self.event_button)
 
-        QTimer.singleShot(0, lambda: asyncio.create_task(self.run()))
+        # QTimer.singleShot(0,self.running_task())
+        # QTimer.singleShot(0, lambda: asyncio.create_task(self.run()))
+        # while not asyncio.events.get_running_loop:
+        #     pass
+        # self.server_task = self.loop.create_task(self.run())
+        loop.call_soon(lambda: loop.create_task(self.running_task()))
+        self.server_task = None
+
+    async def running_task(self):
+
+        self.server_task = asyncio.create_task(self.run())
 
 
     def create_event(self):
@@ -67,6 +77,7 @@ class QTServer(QWidget):
         # await self.server._close()
         if hasattr(self.server, "_close"):
             asyncio.create_task(self.server._close())
+        self.server_task.cancel()
         a0.accept()
     
     
@@ -176,7 +187,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     loop = QEventLoop()
     asyncio.set_event_loop(loop)
-    window = QTServer(3)
+    window = QTServer(3, loop = loop)
     window.show()
     with loop:
         loop.run_forever()
