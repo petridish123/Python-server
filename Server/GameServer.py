@@ -68,6 +68,7 @@ class Server:
     
     async def _close(self):
         print("Closing server")
+        
 
 
 if __name__ == "__main__":
