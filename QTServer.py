@@ -47,11 +47,20 @@ class QTServer(QWidget):
     def create_event(self):
         if self.new_window is not None:
             self.new_window.close()
-            self.new_window.deleteLater()
+            # self.new_window.deleteLater()
         print("attempting to create event window")
         self.new_window = eventWindow(self.server.ID_PLAYERS, self)
         self.new_window.show()
-   
+    
+    def clear_window(self):
+        self.new_window = None
+
+    def handle_new_event(self,event : dict):
+        assert "TYPE" in event, "There is no attr TYPE, wrong event"
+        
+        type = event["TYPE"]
+        print(event)
+
     
     def closeEvent(self, a0):
         print("Closing and cleaning up")
@@ -81,7 +90,9 @@ class eventWindow(QWidget):
 
         self.cur_row = 0
 
-        self.data = {}
+        self.data = {"TYPE":"HUNT"}
+
+        self.mainwindow = mainwindow
 
         
         """
@@ -100,7 +111,15 @@ class eventWindow(QWidget):
         self.submit_button = QPushButton("Submit")
         self.submit_button.clicked.connect(self.close)
         self.layout.addWidget(self.submit_button, self.cur_row, 0)
-    
+
+        self.Hunt_button = QPushButton("Hunt")
+        self.Hunt_button.clicked.connect(self.set_hunt)
+        self.layout.addWidget(self.Hunt_button, self.cur_row, 1)
+
+        self.Stun_button = QPushButton("Stun")
+        self.Stun_button.clicked.connect(self.set_stun)
+        self.layout.addWidget(self.Stun_button, self.cur_row, 2)
+
     def info_button_creator(self, ID : int,to : bool = False, from_ : bool = False, watcher :bool = False):
         self.data[ID] = {"To" : False, "From": False, "Watcher": False}
         def _():
@@ -112,6 +131,10 @@ class eventWindow(QWidget):
                 self.data[ID]["Watcher"] = True
 
         return _
+
+    def set_hunt(self): self.data["TYPE"] = "HUNT"
+    def set_stun(self): self.data["TYPE"] = "STUN"
+
 
     def create_row(self, ID : int):
         for i in self.label_names:
@@ -133,7 +156,9 @@ class eventWindow(QWidget):
 
     def close(self):
         # Send the event to the server
-        print(self.data)
+        
+        self.mainwindow.handle_new_event(self.data)
+        self.mainwindow.clear_window()
         super().close()
         self.deleteLater()
 
