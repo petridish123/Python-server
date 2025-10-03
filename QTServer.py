@@ -20,7 +20,7 @@ import Shared.game
 """
 Purpose of this class:
 Create a server from the gameserver class and give it a qt interface
-
+A secondary purpose is to be able to create events and log them
 """
 
 
@@ -170,8 +170,6 @@ class eventWindow(QWidget):
 
 """
 TODO:
-- Make the qtserver hold a server object
-- set up the event menu
 - collect all data here instead of in the server class (hold game here, not in gameserver)
 
 """
