@@ -8,7 +8,7 @@ scores
 cur round
 
 """
-
+import numpy as np
 
 class player:
     def __init__(self,label,name, points = 0):
@@ -215,3 +215,38 @@ class sub_player:
     
     def get_score(self) -> tuple:
         return self.ID, self.current_allocation
+    
+
+class player_matrix:
+    """
+    The purpose of this class is to hold all methods and variables
+    for each player's ideas about how other players think about eachother
+    """
+
+
+    def __init__(self, ID, ID_players):
+
+        self.ID = ID
+        self.matrix = self.create_blank_matrix(ID_players)
+
+    
+    def create_blank_matrix(self, ID_players):
+        new_matrix = np.matrix(np.array([np.zeros() for i in range(len(ID_players))]))
+        return new_matrix
+    
+    def add_value(self, ID_from, ID_to, value):
+        """
+        This takes the value and adds it to player k's belief about the from and to player's interactions
+        Returns the new value
+        """
+
+        self.matrix[ID_from][ID_to] += value
+        return self.matrix[ID_from][ID_to]
+
+    def get_belief(self, ID_from : int|None = None, ID_to : int|None = None):
+        if ID_from == None:
+            return self.matrix
+        if ID_to == None:
+            return self.matrix[ID_from]
+        return self.matrix[ID_from][ID_to]
+        # Will get the belief(s) of a specific player to another, or the entire thing if not specified

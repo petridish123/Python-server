@@ -61,6 +61,14 @@ class QTServer(QWidget):
         self.new_window = None
 
     def handle_new_event(self,event : dict):
+        """
+        This takes in an event that follows the type:
+        {"TYPE":"HUNT"|"STUN", ID:{"TO":True|False, "FROM":True|False, "WATCHER":True|False}}
+        for all IDs/players involved.
+
+        The goal of handle event is to be able to use it in the equation by Dr. Crandall not included in this repository.
+        
+        """
         assert "TYPE" in event, "There is no attr TYPE, wrong event"
         
         type = event["TYPE"]
