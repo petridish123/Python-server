@@ -16,7 +16,7 @@ from qasync import QEventLoop, asyncSlot
 import asyncio
 
 import Shared.game
-
+import Server.Equations
 """
 Purpose of this class:
 Create a server from the gameserver class and give it a qt interface
@@ -33,6 +33,8 @@ class QTServer(QWidget):
 
         self.server = Server.GameServer.Server(num_players, url, port)
         
+        self.equation = Server.Equations.equation([])
+
         self.new_window = None
         self.layout : QGridLayout = QGridLayout()
         self.setLayout(self.layout)
@@ -44,6 +46,18 @@ class QTServer(QWidget):
 
         loop.call_soon(lambda: loop.create_task(self.running_task()))
         self.server_task = None
+
+        self.events = {}
+
+        self.server.update_round.connect(self.new_round)
+        self.server.start_game.connect(self.start_game)
+
+    def start_game(self, ID_players):
+        ids = [id for id in ID_players]
+        self.equation = Server.Equations.equation(ids)        
+
+    def new_round(self, *args, **kwargs):
+        pass
 
     async def running_task(self):
 
@@ -64,6 +78,9 @@ class QTServer(QWidget):
         """
         This takes in an event that follows the type:
         {"TYPE":"HUNT"|"STUN", ID:{"TO":True|False, "FROM":True|False, "WATCHER":True|False}}
+        I have the event reformatting to:
+        {"TYPE": "HUNT"|"STUN", "To":[id1,id2...idn], "From":[id1,id2...idn], "Watcher":[id1,id2...idn]}
+        then I turn this into a pd dataframe in the equation
         for all IDs/players involved.
 
         The goal of handle event is to be able to use it in the equation by Dr. Crandall not included in this repository.
@@ -73,6 +90,13 @@ class QTServer(QWidget):
         
         type = event["TYPE"]
         print(event)
+        if not self.server.t in self.events:
+            self.events[self.server.t] = {i : [event[i]] for i in event}
+        else:
+            for i in self.events:
+                self.events[self.server.t][i].append(event[i])
+        
+        
 
     
     def closeEvent(self, a0):
@@ -137,12 +161,12 @@ class eventWindow(QWidget):
         self.data[ID] = {"To" : False, "From": False, "Watcher": False}
         def _():
             if to:
-                self.data[ID]["To"] = True
+                self.data[ID]["To"] = not self.data[ID]["To"]
             elif from_:
-                self.data[ID]["From"] = True
+                self.data[ID]["From"] = not self.data[ID]["From"] 
             elif watcher:
-                self.data[ID]["Watcher"] = True
-
+                self.data[ID]["Watcher"] = not self.data[ID]["Watcher"]
+            print(self.data)
         return _
 
     def set_hunt(self): self.data["TYPE"] = "HUNT"
@@ -165,11 +189,20 @@ class eventWindow(QWidget):
             self.layout.addWidget(button1, self.cur_row, col)
         self.cur_row += 1
 
-
+    def format_event(self):
+        event = {"TYPE" : self.data["TYPE"], "To":[], "From":[], "Watcher":[]}
+        for id in self.data:
+            if id != "TYPE": #The formatting is stupid right now and it isn't that good
+                #The id is now a number
+                for type in self.data[id]:
+                    if self.data[id][type]:
+                        event[type].append(id)
+        self.data = event
+        return self.data
 
     def close(self):
         # Send the event to the server
-        
+        self.format_event()
         self.mainwindow.handle_new_event(self.data)
         self.mainwindow.clear_window()
         super().close()

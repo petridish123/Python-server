@@ -1,6 +1,6 @@
 import json, asyncio, websockets
 import Shared.game
-
+import Shared.signals
 PORT = 8765
 
 class Server:
@@ -12,8 +12,10 @@ class Server:
         self.game = Shared.game()
         self.url = url
         self.port = port
-
+        self.t = self.game.round
         self.scores = {}
+        self.update_round = Shared.signals.Signal()
+        self.start_game = Shared.signals.Signal()
         
 
     async def handler(self, websocket : websockets.ClientConnection):
@@ -32,6 +34,7 @@ class Server:
             if self.game.num_players == self.NUM_PLAYERS:
                 for ws in self.connected:
                     print(self.game.num_players)
+                    await self.start_game.emit(self.ID_PLAYERS)
                     await ws.send(json.dumps({"STARTGAME" : list(self.ID_PLAYERS.keys())}).encode())
 
             async for msg in websocket:
@@ -53,7 +56,10 @@ class Server:
         msg = json.loads(msg.decode())
         if "ID" in msg and "ALLOCATION" in msg:
             if self.game.set_score(msg["ID"],msg["ALLOCATION"]):
+                
                 self.game.new_round()
+                self.t = self.game.round
+                await self.update_round.emit(self.t)
                 for player in self.connected:
                     await player.send(json.dumps({"ROUND" : self.game.round}).encode())
 
