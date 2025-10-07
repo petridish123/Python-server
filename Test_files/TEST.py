@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QMenu, QApplication
 import sys
-
+import asyncio
 class MyWindow(QWidget):
     def __init__(self,):
         super().__init__()
@@ -17,8 +17,17 @@ class MyWindow(QWidget):
         self.context.exec(event.globalPos())
 
 
-app = QApplication(sys.argv)
-window = MyWindow()
-sys.exit(app.exec())
+# app = QApplication(sys.argv)
+# window = MyWindow()
+# sys.exit(app.exec())
 
 
+
+
+async def func(*args, **kwargs):
+    print("yes" in kwargs)
+    print(kwargs)
+    print(args)
+
+# func(no = 12, yes = 13)
+asyncio.run(func(no = 1, yes = "13"))

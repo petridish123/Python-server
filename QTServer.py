@@ -52,7 +52,15 @@ class QTServer(QWidget):
         self.server.update_round.connect(self.new_round)
         self.server.start_game.connect(self.start_game)
 
-    def start_game(self, ID_players):
+    def start_game(self, *args, **kwargs):
+        ID_players = None
+        if "ID_players" in kwargs:
+            ID_players = kwargs["ID_players"]
+        elif "ID_players" in args:
+            ID_players= args["ID_players"]
+        else:
+            sys.exit()
+            return
         ids = [id for id in ID_players]
         self.equation = Server.Equations.equation(ids)        
 

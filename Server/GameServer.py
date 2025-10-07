@@ -34,7 +34,7 @@ class Server:
             if self.game.num_players == self.NUM_PLAYERS:
                 for ws in self.connected:
                     print(self.game.num_players)
-                    await self.start_game.emit(self.ID_PLAYERS)
+                    await self.start_game.emit(ID_players = self.ID_PLAYERS)
                     await ws.send(json.dumps({"STARTGAME" : list(self.ID_PLAYERS.keys())}).encode())
 
             async for msg in websocket:

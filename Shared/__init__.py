@@ -1,3 +1,3 @@
-from .game import sub_player, player, game
+from .game import sub_player, player, game, player_matrix
 
-__all__ = ["sub_player", "player", "game"]
+__all__ = ["sub_player", "player", "game", "player_matrix"]

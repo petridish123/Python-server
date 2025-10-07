@@ -231,7 +231,7 @@ class player_matrix:
 
     
     def create_blank_matrix(self, ID_players):
-        new_matrix = np.matrix(np.array([np.zeros() for i in range(len(ID_players))]))
+        new_matrix = np.matrix(np.array([np.zeros(shape= (len(ID_players))) for i in range(len(ID_players))]))
         return new_matrix
     
     def add_value(self, ID_from, ID_to, value):

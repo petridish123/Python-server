@@ -9,7 +9,7 @@ class Signal:
 
     async def emit(self, *args, **kwargs):
         for func in self.connections:
-            func(args,kwargs)
+            func(*args,**kwargs)
     
     def connect(self, func : Callable):
         self.connections.append(func)
