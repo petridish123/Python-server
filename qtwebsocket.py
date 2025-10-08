@@ -111,6 +111,7 @@ class QtWebsocket(QWidget):
                     # pl.change_row(pl.cur_row-1)
                 else:
                     print(f"Oldrow : {move_row} and {pl.cur_row}")
+            sys.exit()
         if "ROUND" in message:
             self.change_round_num(message["ROUND"])
                     
@@ -133,6 +134,10 @@ class QtWebsocket(QWidget):
                 await self.handle_message(message)
             except KeyboardInterrupt:
                 print("AWW")
+                sys.exit()
+            except websockets.exceptions.ConnectionClosed:
+                print("Client disconnected")
+                sys.exit()
 
 def main():
     app = QApplication(sys.argv)
