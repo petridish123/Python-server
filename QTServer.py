@@ -65,7 +65,10 @@ class QTServer(QWidget):
         self.equation = Server.Equations.equation(ids)        
 
     def new_round(self, *args, **kwargs):
-        pass
+        print(self.events)
+        print(self.server.game.scores)
+        # Do something here with the equation
+       
 
     async def running_task(self):
 
@@ -174,7 +177,7 @@ class eventWindow(QWidget):
                 self.data[ID]["From"] = not self.data[ID]["From"] 
             elif watcher:
                 self.data[ID]["Watcher"] = not self.data[ID]["Watcher"]
-            print(self.data)
+            # print(self.data)
         return _
 
     def set_hunt(self): self.data["TYPE"] = "HUNT"

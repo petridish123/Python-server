@@ -58,3 +58,9 @@ Questions:
 - what should the starting popularity be?
 
 """
+
+"""
+Remember that the allocations are formatted as
+{time: {Id:{allocations}... for all IDs} ... for each round}
+
+"""
