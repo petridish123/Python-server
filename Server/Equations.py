@@ -6,7 +6,7 @@ import pandas as pd
 class equation:
     def __init__(self, Ids): #ID matrix is a dict that maps ids to their matrix
         self.t = 0 # This is time 0
-        self.matrices = {self.t: {id:player_matrix(id,Ids)} for id in Ids} # This will keep track of the times
+        self.matrices = {self.t: {id:player_matrix(id,Ids) for id in Ids}} # This will keep track of the times
         self.allocations = {self.t: {Id:[0 for i in range(len(Ids))] for Id in Ids}}
         self.ids = [Id for Id in Ids]
         self.reputations = {self.t:[10 for i in self.ids]}
@@ -44,6 +44,13 @@ class equation:
         if type(events) != pd.DataFrame:
             new_events = pd.DataFrame(events)
         new_events = new_events[k in new_events["Watcher"]] 
+
+    def update_matrices(self, allocations, events):
+        print(allocations)
+        print(events)
+        print(pd.DataFrame(events))
+        print(self.matrices)
+        print("I am useless and get paid for nothing")
 
 
 

@@ -59,7 +59,7 @@ class Server:
                 
                 self.game.new_round()
                 self.t = self.game.round
-                await self.update_round.emit(self.t)
+                await self.update_round.emit(round = self.t)
                 for player in self.connected:
                     await player.send(json.dumps({"ROUND" : self.game.round}).encode())
 

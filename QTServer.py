@@ -62,12 +62,19 @@ class QTServer(QWidget):
             sys.exit()
             return
         ids = [id for id in ID_players]
+       
         self.equation = Server.Equations.equation(ids)        
 
     def new_round(self, *args, **kwargs):
         print(self.events)
         print(self.server.game.scores)
+        t = 0
+        if "round" in kwargs:
+            t = kwargs["round"]-1
+        if t not in self.events:
+            self.events[t] = {"TYPE":[], "To":[],"From":[], "Watcher": []}
         # Do something here with the equation
+        self.equation.update_matrices(self.server.game.scores, self.events[t])
        
 
     async def running_task(self):
@@ -101,12 +108,15 @@ class QTServer(QWidget):
         
         type = event["TYPE"]
         print(event)
+
         if not self.server.t in self.events:
             self.events[self.server.t] = {i : [event[i]] for i in event}
         else:
-            for i in self.events:
+            for i in self.events[self.server.t]:
+                
+       
                 self.events[self.server.t][i].append(event[i])
-        
+        # print(self.events)
         
 
     
