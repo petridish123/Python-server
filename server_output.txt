@@ -1,0 +1,35 @@
+Starting Server...
+listening on port: 8765
+received message: b'{"REQUEST": "CONNECT"}'
+{'REQUEST': 'CONNECT'}
+received message: b'{"REQUEST": "CONNECT"}'
+{'REQUEST': 'CONNECT'}
+3
+3
+3
+received message: b'{"REQUEST": "CONNECT"}'
+{'REQUEST': 'CONNECT'}
+attempting to create event window
+{'TYPE': 'STUN', 'To': [2], 'From': [1], 'Watcher': [1, 2, 3]}
+received message: b'{"ALLOCATION": {"2": -1, "3": 0}, "ID": 1}'
+1 / 3 collected
+received message: b'{"ALLOCATION": {"1": -1, "3": 0}, "ID": 2}'
+2 / 3 collected
+received message: b'{"ALLOCATION": {"1": -1, "2": 0}, "ID": 3}'
+all allocation collected
+{0: {'TYPE': ['STUN'], 'To': [[2]], 'From': [[1]], 'Watcher': [[1, 2, 3]]}}
+{0: {1: {'2': -1, '3': 0}, 2: {'1': -1, '3': 0}, 3: {'1': -1, '2': 0}}, 1: {}}
+{0: {1: {'2': -1, '3': 0}, 2: {'1': -1, '3': 0}, 3: {'1': -1, '2': 0}}, 1: {}}
+{'TYPE': ['STUN'], 'To': [[2]], 'From': [[1]], 'Watcher': [[1, 2, 3]]}
+   TYPE   To From    Watcher
+0  STUN  [2]  [1]  [1, 2, 3]
+{0: {1: <Shared.game.player_matrix object at 0x0000019EFBC78C00>, 2: <Shared.game.player_matrix object at 0x0000019EFBC78F30>, 3: <Shared.game.player_matrix object at 0x0000019EFBC4B450>}}
+I am useless and get paid for nothing
+Client disconnected
+Client removed. Total: 2
+Client disconnected
+Client removed. Total: 1
+Client disconnected
+Client removed. Total: 0
+Closing and cleaning up
+Closing server
