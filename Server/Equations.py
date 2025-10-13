@@ -56,8 +56,11 @@ class equation:
 
 """
 TODO:
-- get events in here
+- get events in here :check:
 - finish the calculation
+- 
+
+I have all the data being passed in: allocations and events. Use the equations given by Jake to do the thing
 """
 
 """
