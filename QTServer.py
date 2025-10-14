@@ -68,13 +68,13 @@ class QTServer(QWidget):
     def new_round(self, *args, **kwargs):
         print(self.events)
         print(self.server.game.scores)
-        t = 0
+        t = 1
         if "round" in kwargs:
             t = kwargs["round"]-1
         if t not in self.events:
             self.events[t] = {"TYPE":[], "To":[],"From":[], "Watcher": []}
         # Do something here with the equation
-        self.equation.update_matrices(self.server.game.scores, self.events[t])
+        self.equation.update_matrices(self.server.game.scores, self.events[t], t)
        
 
     async def running_task(self):

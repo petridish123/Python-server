@@ -58,7 +58,7 @@ class game:
         self.num_players = 0
 
         self.scores = {}
-        self.round = 0
+        self.round = 1
     
     def add_player(self, player_name : str|None = None, PLAYER : player|None = None) -> int:
         if not player_name:
@@ -250,3 +250,8 @@ class player_matrix:
             return self.matrix[ID_from]
         return self.matrix[ID_from][ID_to]
         # Will get the belief(s) of a specific player to another, or the entire thing if not specified
+    def save_copy(self):
+        return self.matrix.copy()
+    
+    def __str__(self):
+        return str(self.matrix)
