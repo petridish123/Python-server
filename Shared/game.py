@@ -225,15 +225,29 @@ class player_matrix:
 
 
     def __init__(self, ID, ID_players):
-
+        self.ID_players = ID_players
         self.ID = ID
         self.matrix = self.create_blank_matrix(ID_players)
+        self.reputations : dict = {0:self.create_blank_reputation(ID_players)} # This is the starting reputations at time 0
 
     
     def create_blank_matrix(self, ID_players):
         new_matrix = np.matrix(np.array([np.zeros(shape= (len(ID_players))) for i in range(len(ID_players))]))
         return new_matrix
     
+    def create_blank_reputation(self, ID_players):
+        new_dict = {id:0 for id in ID_players} # gets the id and maps it to a value, much easier to manage than a list
+        return new_dict
+
+    def get_reputation(self,t,j):
+        # Gets the reputation at time t of player j
+        assert t in self.reputations, "This time has not been created yet"
+        assert j in self.reputations[t], "This reputation does not exist yet"
+        return self.reputations[t][j]
+    
+    def create_new_t_reputation(self,t): # Creates a new slot for reputation scores to go into.
+        self.reputations[t] = self.create_blank_reputation(self.ID_players)
+
     def add_value(self, ID_from, ID_to, value):
         """
         This takes the value and adds it to player k's belief about the from and to player's interactions

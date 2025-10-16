@@ -1,6 +1,7 @@
 import numpy as np
 import math
 from Shared import game, player_matrix
+from Shared import plot_directional_graph
 import pandas as pd
 
 class equation:
@@ -73,11 +74,12 @@ class equation:
                     s_i_j = allocations[self.t][i][str(j)] # How player i thinks about player j. Since all allocations are observable for now, it is as observed by k
                     average_event = None
                     e_score = self.ALPHA * self.calc_events(events,k,i,j)
-                    score = self.LAMBDA * (s_i_j + e_score) + (1-self.LAMBDA) * (self.matrices[prev][k][i, j])
+                    score = self.LAMBDA * (s_i_j + e_score) + (1-self.LAMBDA) * (self.matrices[prev][k][i-1, j-1])
                     # print(self.matrices[prev][k])
                     print(f"score of {i} to {j} as observed by {k}: {score}")
                     self.matrices[self.t][k].matrix[i-1, j-1] = score
             print(f"Diff from prev and current: \nprev for {k}\n{str(self.matrices[prev][k])} \ncur for {k}\n{str(self.matrices[self.t][k])}")
+            plot_directional_graph(self.matrices[self.t][k].matrix,t= self.t,k=k)
             
     
     def calc_events(self, events : pd.DataFrame, k, i, j):
@@ -95,7 +97,49 @@ class equation:
         total /= len(filtered_events)
         return total
              
+    def reputation(self,k, i, t=0):
+        """
+        This is the reputation of player i as observed by player k
+
+        it is equal to the sum of all the ideas of the sentiments from player j => i as observed by k where i!=j multiplied by the reputation of player j as observed by player k in t-1
+        """
+        if t ==0: t = self.t
+        total = 0
+        for j in self.ids:
+            if i == j: continue
+            total += self.matrices[t][k].matrix[j-1,i-1] * self.matrices[t][k].reputations[t-1][j] # U bar from j to i as observed by k times the believed reputation of j at t-1
         
+        return total
+
+    def true_reputation(self,i,t = 0):
+        t = t if t != 0 else self.t
+        N = len(self.ids) if len(self.ids) > 0 else 1
+        total = 0        
+        for k in self.ids:
+            if k == i: continue # player i cannot give itself a boost in reputation
+            total += self.matrices[t][k].reputations[t][i] # this takes the reputation of i as observed by player k
+
+        return total / N
+
+    def all_reputations(self,t=0):
+        t= t if t!= 0 else self.t
+        """
+        For every player i, update player k's belief about their reputation for each k
+        """
+        reputations = {}
+        for i in self.ids:
+            for k in self.ids:
+                if k == i: continue
+                pmatrix = self.matrices[t][k]
+                if not t in pmatrix.reputations: # if there is no reputation for time t, create one
+                    pmatrix.create_new_t_reputation(t)
+                pmatrix.reputations[t][i] = self.reputation(k,i) # update the reputation belief of player k about player i
+            reputations[i] = self.true_reputation(i,t)
+        
+
+
+        pass # This will calculate the believed reputation of all players about all other players and then calculate the true reputation.
+        # This function needs to create the new reputation slots in the player matrix
 
     def score(self, type: str):
         if type == "HUNT": return 1
