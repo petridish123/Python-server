@@ -212,14 +212,15 @@ def plot_directional_graph(matrix, labels=None, threshold=0.1, t=0,k=0):
     plt.title("Directed Network Graph with Bidirectional Strengths", fontsize=14)
     plt.axis('off')
     plt.tight_layout()
-    plt.show()
+    # plt.show()
+    plt.savefig(f"figures/figure{t}_{k}.png")
 
-matrix = np.array(
-[[ 0.,   -0.81,  0.99],
- [-0.99 , 0.   ,-0.99],
- [ 0.99 , 0.99 , 0.  ]])
+# matrix = np.array(
+# [[ 0.,   -0.81,  0.99],
+#  [-0.99 , 0.   ,-0.99],
+#  [ 0.99 , 0.99 , 0.  ]])
 
-plot_directional_graph(matrix)
+# plot_directional_graph(matrix)
 
 # plt.imshow(matrix)
 # plt.show()
@@ -232,7 +233,7 @@ This new function will use imshow
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_matrix_with_labels(matrix, labels=None, cmap='bwr_r', value_format='{:.2f}'):
+def plot_matrix_with_labels(matrix, labels=None, cmap='bwr_r', value_format='{:.2f}', t=0,k=0):
     """
     Visualize a D x D matrix using imshow with overlaid value labels and axis tick labels.
 
@@ -279,11 +280,13 @@ def plot_matrix_with_labels(matrix, labels=None, cmap='bwr_r', value_format='{:.
 
     ax.set_title("Directed Strength Matrix", pad=20)
     plt.tight_layout()
-    plt.show()
+    # plt.show()
+    plt.savefig(f"figure{t}_{k}")
+
 
 
 # Example usage
 # D = 5
 # np.random.seed(42)
 # matrix = np.random.uniform(-1, 1, (D, D))
-plot_matrix_with_labels(matrix, labels=[f"Node {i+1}" for i in range(3)])
+# plot_matrix_with_labels(matrix, labels=[f"Node {i+1}" for i in range(3)])

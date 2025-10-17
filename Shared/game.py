@@ -236,7 +236,7 @@ class player_matrix:
         return new_matrix
     
     def create_blank_reputation(self, ID_players):
-        new_dict = {id:0 for id in ID_players} # gets the id and maps it to a value, much easier to manage than a list
+        new_dict = {id:1 for id in ID_players} # gets the id and maps it to a value, much easier to manage than a list
         return new_dict
 
     def get_reputation(self,t,j):

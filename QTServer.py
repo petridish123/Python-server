@@ -75,6 +75,7 @@ class QTServer(QWidget):
             self.events[t] = {"TYPE":[], "To":[],"From":[], "Watcher": []}
         # Do something here with the equation
         self.equation.update_matrices(self.server.game.scores, self.events[t], t)
+        self.equation.all_reputations(t)
        
 
     async def running_task(self):

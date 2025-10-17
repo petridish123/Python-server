@@ -76,9 +76,9 @@ class equation:
                     e_score = self.ALPHA * self.calc_events(events,k,i,j)
                     score = self.LAMBDA * (s_i_j + e_score) + (1-self.LAMBDA) * (self.matrices[prev][k][i-1, j-1])
                     # print(self.matrices[prev][k])
-                    print(f"score of {i} to {j} as observed by {k}: {score}")
+                    # print(f"score of {i} to {j} as observed by {k}: {score}")
                     self.matrices[self.t][k].matrix[i-1, j-1] = score
-            print(f"Diff from prev and current: \nprev for {k}\n{str(self.matrices[prev][k])} \ncur for {k}\n{str(self.matrices[self.t][k])}")
+            # print(f"Diff from prev and current: \nprev for {k}\n{str(self.matrices[prev][k])} \ncur for {k}\n{str(self.matrices[self.t][k])}")
             plot_directional_graph(self.matrices[self.t][k].matrix,t= self.t,k=k)
             
     
@@ -133,12 +133,15 @@ class equation:
                 pmatrix = self.matrices[t][k]
                 if not t in pmatrix.reputations: # if there is no reputation for time t, create one
                     pmatrix.create_new_t_reputation(t)
-                pmatrix.reputations[t][i] = self.reputation(k,i) # update the reputation belief of player k about player i
+                reputation_ = self.reputation(k,i)
+                print(reputation_)
+                pmatrix.reputations[t][i] = reputation_#self.reputation(k,i) # update the reputation belief of player k about player i
+
             reputations[i] = self.true_reputation(i,t)
-        
+        print(f"true reputations: {reputations}")
+        return reputations
 
-
-        pass # This will calculate the believed reputation of all players about all other players and then calculate the true reputation.
+        # This will calculate the believed reputation of all players about all other players and then calculate the true reputation.
         # This function needs to create the new reputation slots in the player matrix
 
     def score(self, type: str):
