@@ -7,141 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_directional_graph(matrix, labels=None, threshold=0.0,t=1,k=1):
-    """
-    Plots a directed network graph from a D x D matrix.
-    
-    Args:
-        matrix (np.ndarray): A square matrix of shape (D, D), where M[i, j]
-                             is the strength from node i to node j.
-        labels (list): Optional list of node labels (length D).
-        threshold (float): Minimum absolute strength to display an edge.
-    """
-    D = matrix.shape[0]
-    if labels is None:
-        labels = [f"N{i}" for i in range(D)]
-    
-    # Create directed graph
-    G = nx.DiGraph()
-    
-    # Add nodes
-    for i, label in enumerate(labels):
-        G.add_node(i, label=label)
-    
-    # Add edges based on threshold
-    for i in range(D):
-        for j in range(D):
-            if i != j and abs(matrix[i, j]) > threshold:
-                G.add_edge(i, j, weight=matrix[i, j])
-    
-    # Position nodes using spring layout
-    pos = nx.spring_layout(G, seed=42)
-    
-    # Extract weights for edge thickness
-    weights = [abs(G[u][v]['weight']) for u, v in G.edges()]
-    max_weight = max(weights) if weights else 1
-    normalized_weights = [3 * (w / max_weight) for w in weights]
-    
-    # Draw nodes
-    nx.draw_networkx_nodes(G, pos, node_size=1000, node_color='lightblue')
-    
-    # Draw edges with arrow style
-    nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=20,
-                           width=normalized_weights, edge_color='gray')
-    
-    # Draw labels
-    nx.draw_networkx_labels(G, pos, labels={i: label for i, label in enumerate(labels)},
-                            font_size=12, font_weight='bold')
-    
-    # Add edge labels (optional)
-    edge_labels = {(u, v): f"{G[u][v]['weight']:.2f}" for u, v in G.edges()}
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='red')
-    
-    plt.title("Directed Strength Network", fontsize=14)
-    plt.axis('off')
-    plt.show()
-    plt.savefig(f"figures/figure{t}_{k}.png")
-
-# # Example usage
-# D = 5
-# np.random.seed(0)
-# matrix = np.random.randn(D, D)  # random strengths (can be positive or negative)
-# plot_directed_strength_graph(matrix, labels=[f"Node {i+1}" for i in range(D)], threshold=0.2)
-
-import numpy as np
-import matplotlib.pyplot as plt
-import networkx as nx
-
-def plot_directional_graph(matrix, labels=None, threshold=0.1, t=0,k=0):
-    """
-    Plots a directed network graph from a D x D matrix, showing edges i→j and j→i separately.
-    
-    Args:
-        matrix (np.ndarray): Square matrix (D x D), where M[i,j] is strength from node i to node j.
-        labels (list): Optional list of node labels.
-        threshold (float): Minimum |strength| for an edge to be shown.
-    """
-    D = matrix.shape[0]
-    if labels is None:
-        labels = [f"N{i}" for i in range(D)]
-
-    # Create directed graph
-    G = nx.DiGraph()
-    
-    # Add nodes
-    for i, label in enumerate(labels):
-        print(f"i: {i} label: {label}")
-        G.add_node(i, label=label)
-    
-    # Add edges (i→j)
-    for i in range(D):
-        for j in range(D):
-            if i != j and abs(matrix[i, j]) > threshold:
-                G.add_edge(i, j, weight=matrix[i, j])
-    
-    
-    # Position nodes
-    pos = nx.spring_layout(G, seed=42)
-    
-    # Edge attributes
-    weights = np.array([abs(G[u][v]['weight']) for u, v in G.edges()])
-    max_w = weights.max() if len(weights) > 0 else 1
-    widths = 2 + 3 * (weights / max_w)
-    print(G.edges())
-    print(weights)
-    # Edge colors based on sign
-    colors = ['green' if G[u][v]['weight'] > 0 else 'red' for u, v in G.edges()]
-    
-    # Draw nodes
-    nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=1000)
-    
-    nx.draw_networkx_labels(G, pos, labels={i: label for i, label in enumerate(labels)}, font_weight='bold')
-
-    # Draw edges with curvature so both directions are visible
-    for (u, v, w), width, color in zip(G.edges(data='weight'), widths, colors):
-        rad = 0.2 if G.has_edge(v, u) else 0.0  # curve if reverse edge exists
-        nx.draw_networkx_edges(
-            G, pos,
-            edgelist=[(u, v)],
-            arrowstyle='-|>',
-            arrowsize=20,
-            width=width,
-            edge_color=color,
-            connectionstyle=f'arc3,rad={rad}'
-        )
-    
-
-    edge_labels = {(u, v): f"{G[u][v]['weight']:.2f}" for u, v in G.edges()}
-    print(edge_labels)
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='black', font_size=9)
-    print(matrix)
-    print(f"player {k}")
-    plt.title("Directed Network Graph (i→j and j→i)", fontsize=14)
-    plt.axis('off')
-    plt.show()
-    plt.savefig(f"figures/figure{t}_{k}.png")
-
-
 
 def plot_directional_graph(matrix, labels=None, threshold=0.1, t=0,k=0):
     """
@@ -213,6 +78,8 @@ def plot_directional_graph(matrix, labels=None, threshold=0.1, t=0,k=0):
     plt.axis('off')
     plt.tight_layout()
     # plt.show()
+    plt.clf()
+    plt.imshow(matrix)
     plt.savefig(f"figures/figure{t}_{k}.png")
 
 # matrix = np.array(
@@ -281,7 +148,7 @@ def plot_matrix_with_labels(matrix, labels=None, cmap='bwr_r', value_format='{:.
     ax.set_title("Directed Strength Matrix", pad=20)
     plt.tight_layout()
     # plt.show()
-    plt.savefig(f"figure{t}_{k}")
+    plt.savefig(f"figures/figure{t}_{k}")
 
 
 

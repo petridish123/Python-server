@@ -1,7 +1,7 @@
 import numpy as np
 import math
 from Shared import game, player_matrix
-from Shared import plot_directional_graph
+from Shared import plot_directional_graph, plot_matrix_with_labels
 import pandas as pd
 
 class equation:
@@ -79,7 +79,8 @@ class equation:
                     # print(f"score of {i} to {j} as observed by {k}: {score}")
                     self.matrices[self.t][k].matrix[i-1, j-1] = score
             # print(f"Diff from prev and current: \nprev for {k}\n{str(self.matrices[prev][k])} \ncur for {k}\n{str(self.matrices[self.t][k])}")
-            plot_directional_graph(self.matrices[self.t][k].matrix,t= self.t,k=k)
+            # plot_directional_graph(self.matrices[self.t][k].matrix,t= self.t,k=k)
+            plot_matrix_with_labels(self.matrices[self.t][k].matrix,t= self.t,k=k)
             
     
     def calc_events(self, events : pd.DataFrame, k, i, j):
