@@ -36,11 +36,25 @@ class QtWebsocket(QWidget):
         self.button.clicked.connect(self.send_allocation) # connect to a function
         self.layout.addWidget(self.button,0,1)
         
+        self.camp_button = QPushButton("Select Camp")
+        self.camp_button.clicked.connect(self.create_camp_menu) # Connect this to opening a camp window 
+        self.layout.addWidget(self.camp_button, 0, 2)
+
+
         self.round_num = 0
         self.round_num_label = QLabel("Round: " + str(self.round_num))
         self.layout.addWidget(self.round_num_label, 0 , 0)
 
 
+
+
+        """
+        Need to add the camp button and the button to view matrix?
+
+        Need matrix to be sent over
+
+        also need camps to be sent over
+        """
         self.row = 1
         self.player : player|None = None
 
@@ -48,6 +62,12 @@ class QtWebsocket(QWidget):
 
         self.round_allocations = {}
         self.cur_round = 0
+
+        self.socket = None
+
+        self.window = None
+
+        self.camp :int | None = None
 
         self.run()
 
@@ -72,7 +92,9 @@ class QtWebsocket(QWidget):
         new_message = {
             "ALLOCATION" : self.round_allocations,
             "ID" : self.player.name,
+            "CAMP" : self.camp,
         }
+        print("sending allocations: ", new_message)
         new_message = json.dumps(new_message).encode()
         await self.socket.send(new_message)
 
@@ -123,7 +145,12 @@ class QtWebsocket(QWidget):
 
     @asyncSlot()
     async def run(self):
-        self.socket = await websockets.connect("ws://localhost:8765")
+        while not self.socket: # Keep trying to connect
+            try:
+                self.socket = await websockets.connect("ws://localhost:8765")
+            except Exception as e:
+                pass
+                
         await self.socket.send(json.dumps({"REQUEST" : "CONNECT"}).encode())
         # message = await self.socket.recv()
         # print(message)
@@ -138,6 +165,111 @@ class QtWebsocket(QWidget):
             except websockets.exceptions.ConnectionClosed:
                 print("Client disconnected")
                 sys.exit()
+
+    def clear_window(self):
+        self.window = None
+    
+    def set_camp(self, camp):
+        self.camp = camp
+    
+    def create_camp_menu(self):
+        if self.window is not None:
+            self.window.close()
+        self.window = campWindow([1,2,3], mainwindow=self)
+        self.window.show()
+
+    def closeEvent(self, a0):
+        print("Closing and cleaning up")
+        if self.window and hasattr(self.window, "close"):
+            self.window.close()
+        
+        a0.accept()
+
+"""
+
+
+
+    def create_event(self):
+        if self.new_window is not None:
+            self.new_window.close()
+        print("attempting to create event window")
+        self.new_window = eventWindow(self.server.ID_PLAYERS, self)
+        self.new_window.show()
+
+"""
+
+
+
+class campWindow(QWidget):
+    """
+    Based off the event window in the QTServer file, so if there are errors, they probably stem from that
+    I will be changing this so that it opens a window that has several camps on it and a list of the people in that camp
+    And it will return a simple number for the camp which the QTWebsocket class will add to their allocations to send back
+    """
+    def __init__(self, camps : dict|list ,players : dict|None = None, mainwindow : QtWebsocket|None = None):
+        
+        super().__init__()
+
+        self.layout : QGridLayout = QGridLayout()
+        self.setLayout(self.layout)
+
+        self.mainwindow = mainwindow
+
+        self.camp = 0
+
+        """
+        This window is going to look something like this:
+        |------------------------------|-|[]|X|
+        |              Camps                  |
+        | |Camp 1| |Camp 2| |Camp 3| ....     |
+        | Player1  Player4                    |
+        | Player2                             |
+        |                                     |
+        | |Submit|                            |
+        |-------------------------------------|
+
+        where the |Camp X| is a button
+        "Camps" is a label
+        And for now the players will not show up
+        """
+        self.cur_col = 0
+        self.cur_row = 0
+
+        for camp in camps: # This iterates over the camps and gets the name of the camp
+            if type(camp) == type(dict):
+                pass # create the player labels
+            name = f"camp {camp}"
+            button = QPushButton(name)
+            button.clicked.connect(self.set_camp(camp)) # This creates a helper function that sets the window's camp to whatever was selected
+            self.layout.addWidget(button, self.cur_row, self.cur_col)
+            self.cur_col += 1
+        self.cur_row += 1
+    
+        self.submit_button = QPushButton("Submit")
+        self.submit_button.clicked.connect(self.close)
+        self.layout.addWidget(self.submit_button,self.cur_row+1,0)
+
+    def set_camp(self, ID : int) -> callable:
+        
+        def _():
+            self.camp = ID
+        
+        return _
+
+
+
+    def close(self):
+        # Send the camp to the client
+
+        self.mainwindow.set_camp(self.camp)
+        self.mainwindow.clear_window()
+        super().close()
+        self.deleteLater()
+
+
+
+
+
 
 def main():
     app = QApplication(sys.argv)
@@ -159,18 +291,6 @@ def set_style(app : QApplication, sheet : str):
         
         app.setStyleSheet(lines)
 
-
 if __name__ == "__main__":
     main()
 
-"""
-TODO:
-- I need to make a remove player from the GUI
-- if an ID is already in the players, don't add it again
-- send ID in the packet on server side
-- make the buttons record score on client
-- make scores get sent to server side
-- process scores and do something with them (print or send back to client to display)
-
-
-"""

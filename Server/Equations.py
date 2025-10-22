@@ -139,6 +139,7 @@ class equation:
                 pmatrix.reputations[t][i] = reputation_#self.reputation(k,i) # update the reputation belief of player k about player i
 
             reputations[i] = self.true_reputation(i,t)
+        reputations = [(x/4) + 0.5 for x in reputations] # This brings the scores which previously were [-2,2] to [0,1]
         print(f"true reputations: {reputations}")
         return reputations
 
