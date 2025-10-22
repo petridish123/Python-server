@@ -139,7 +139,29 @@ class equation:
                 pmatrix.reputations[t][i] = reputation_#self.reputation(k,i) # update the reputation belief of player k about player i
 
             reputations[i] = self.true_reputation(i,t)
-        reputations = [(x/4) + 0.5 for x in reputations] # This brings the scores which previously were [-2,2] to [0,1]
+        print(f"before: {reputations}")
+
+        """
+        Normalizing below
+        
+        """
+
+        # What if we divide by the sum * 2 and then add 0.5?
+        reputations_sum = np.sum(np.abs(np.array(list(reputations.values())).flatten())) # Gets the total of the reputations
+
+
+        for x in reputations:
+            new_x = reputations[ x ] / (2* reputations_sum + 1e-9)
+            print(f"new_x : {new_x}")
+            reputations[x] = new_x
+
+        rep_mean = np.mean(np.array(list(reputations.values())).flatten())
+        print(f"rep mean {rep_mean}")
+        adjustment = 0.5 - rep_mean
+        for x in reputations:
+            reputations[x] = reputations[x] + adjustment
+
+        
         print(f"true reputations: {reputations}")
         return reputations
 
