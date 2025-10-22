@@ -168,7 +168,7 @@ class equation:
 
 
         for x in reputations: # This loop puts the values [-0.5,0.5]
-            new_x = reputations[ x ] / (2* reputations_sum + 1e-9)
+            new_x = reputations[ x ] / ( reputations_sum + 1e-9) #2*
             print(f"new_x : {new_x}")
             reputations[x] = new_x
 
