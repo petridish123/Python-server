@@ -134,32 +134,27 @@ class equation:
                 pmatrix = self.matrices[t][k]
                 if not t in pmatrix.reputations: # if there is no reputation for time t, create one
                     pmatrix.create_new_t_reputation(t)
-                reputation_ = self.reputation(k,i)
-                print(reputation_)
+                reputation_ = self.reputation(k,i) # Supposed to be the reputation of player i as observed by player k
+                print(f"reputation of player {i} as observed by player {k} : {reputation_}") # I think this needs to be normalized
                 pmatrix.reputations[t][i] = reputation_#self.reputation(k,i) # update the reputation belief of player k about player i
 
+            
+
+        for i in self.ids: # this normalizes all the beliefs, thus cannot be combined with previous loop
+            pmatrix = self.matrices[t][i]
+            # print(pmatrix.reputations)
+            self.normalize_reputations(pmatrix.reputations[t]) # normalize them jauns  # pmatrix.reputations = 
+
+        for i in self.ids: # Since this depends on the the beliefs being normallized, this cannot be combined but must happen afterwards
             reputations[i] = self.true_reputation(i,t)
         print(f"before: {reputations}")
 
+
         """
-        Normalizing below
-        
+        Normalizing below        
         """
 
-        # What if we divide by the sum * 2 and then add 0.5?
-        reputations_sum = np.sum(np.abs(np.array(list(reputations.values())).flatten())) # Gets the total of the reputations
-
-
-        for x in reputations:
-            new_x = reputations[ x ] / (2* reputations_sum + 1e-9)
-            print(f"new_x : {new_x}")
-            reputations[x] = new_x
-
-        rep_mean = np.mean(np.array(list(reputations.values())).flatten())
-        print(f"rep mean {rep_mean}")
-        adjustment = 0.5 - rep_mean
-        for x in reputations:
-            reputations[x] = reputations[x] + adjustment
+        self.normalize_reputations(reputations)
 
         
         print(f"true reputations: {reputations}")
@@ -167,6 +162,23 @@ class equation:
 
         # This will calculate the believed reputation of all players about all other players and then calculate the true reputation.
         # This function needs to create the new reputation slots in the player matrix
+    def normalize_reputations(self, reputations): # Currently has the issue where the player whos matrix this is will also be normalized.... is that bad?
+        print(np.array(list(reputations.values())).flatten())
+        reputations_sum = np.sum(np.abs(np.array(list(reputations.values())).flatten())) # Gets the total of the reputations
+
+
+        for x in reputations: # This loop puts the values [-0.5,0.5]
+            new_x = reputations[ x ] / (2* reputations_sum + 1e-9)
+            print(f"new_x : {new_x}")
+            reputations[x] = new_x
+
+        rep_mean = np.mean(np.array(list(reputations.values())).flatten())
+        print(f"rep mean {rep_mean}")
+        adjustment = 0.5 - rep_mean
+
+        for x in reputations: # This loop makes sure that the values are [0,1]
+            reputations[x] = reputations[x] + adjustment
+
 
     def score(self, type: str):
         if type == "HUNT": return 1
