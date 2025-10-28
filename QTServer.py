@@ -233,8 +233,9 @@ class eventWindow(QWidget):
 
 """
 TODO:
-- Make the "campfires" so that only specific people are observed per "night"
-- Send those camps to the clients
+
+- Send camps to the clients so they correctly open
+- make the UI cleaner and display the camp that is selected.
 - Save data
 """
 

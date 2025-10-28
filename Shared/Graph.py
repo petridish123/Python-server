@@ -103,7 +103,7 @@ import matplotlib.pyplot as plt
 def plot_matrix_with_labels(matrix, labels=None, cmap='bwr_r', value_format='{:.2f}', t=0,k=0):
     D = matrix.shape[0]
     if labels is None:
-        labels = [f"N{i}" if i!=k else f"N{i} (you)" for i in range(D)]
+        labels = [f"N{i}" if i!=k else f"N{i} (you)" for i in range(1,D+1)]
 
     fig, ax = plt.subplots(figsize=(6, 6))
 

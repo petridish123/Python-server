@@ -5,7 +5,7 @@ from Shared import plot_directional_graph, plot_matrix_with_labels
 import pandas as pd
 
 class equation:
-    LAMBDA = .2
+    LAMBDA = .55
     ALPHA = .5
 
     def __init__(self, Ids): #ID matrix is a dict that maps ids to their matrix
