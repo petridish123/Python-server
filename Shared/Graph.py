@@ -101,28 +101,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def plot_matrix_with_labels(matrix, labels=None, cmap='bwr_r', value_format='{:.2f}', t=0,k=0):
-    """
-    Visualize a D x D matrix using imshow with overlaid value labels and axis tick labels.
-
-    Args:
-        matrix (np.ndarray): Square matrix (D x D)
-        labels (list): Optional list of labels for rows/columns
-        cmap (str): Matplotlib colormap name
-        value_format (str): Format string for cell text
-    """
     D = matrix.shape[0]
     if labels is None:
-        labels = [f"N{i}" for i in range(D)]
+        labels = [f"N{i}" if i!=k else f"N{i} (you)" for i in range(D)]
 
     fig, ax = plt.subplots(figsize=(6, 6))
-    
-    # Show the matrix as a heatmap
-    im = ax.imshow(matrix, cmap=cmap, aspect='equal')
 
-    # Add colorbar
+    # Fixed color range so 0 is always visible
+    im = ax.imshow(matrix, cmap=cmap, aspect='equal', vmin=-2, vmax=2)
+
+    # Add colorbar with fixed ticks including 0
     cbar = plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
     cbar.set_label("Connection Strength", rotation=270, labelpad=15)
-    
+    cbar.set_ticks(np.linspace(-2, 2, 5))
+
     # Set ticks and labels
     ax.set_xticks(np.arange(D))
     ax.set_yticks(np.arange(D))
@@ -136,19 +128,19 @@ def plot_matrix_with_labels(matrix, labels=None, cmap='bwr_r', value_format='{:.
     # Rotate x labels for readability
     plt.setp(ax.get_xticklabels(), rotation=45, ha="left", rotation_mode="anchor")
 
-    # Loop over data to create text annotations
+    # Add value labels
     for i in range(D):
         for j in range(D):
             val = matrix[i, j]
             ax.text(j, i, value_format.format(val),
                     ha="center", va="center",
-                    color="black" if abs(val) < np.max(abs(matrix)) * 0.7 else "white",
+                    color="black" if abs(val) < 1.4 else "white",
                     fontsize=10, fontweight='bold')
 
     ax.set_title("Directed Strength Matrix", pad=20)
     plt.tight_layout()
-    # plt.show()
     plt.savefig(f"figures/figure{t}_{k}")
+
 
 
 

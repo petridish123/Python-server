@@ -235,14 +235,7 @@ class eventWindow(QWidget):
 TODO:
 - Make the "campfires" so that only specific people are observed per "night"
 - Send those camps to the clients
-
-- Make the reputation score scale between 0 and 1, with 0.5 being the mean
-
-(Scores / 4 )+ 0.5
-
-This guarantees that all scores will be brought between [0,1] and that neutral will have 0.5 influence
-
-- Make the Server calculate allocations as observed
+- Save data
 """
 
 

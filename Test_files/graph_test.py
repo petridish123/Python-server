@@ -74,8 +74,59 @@ def plot_directed_strength_graph(matrix, labels=None, threshold=0.0):
     plt.show()
 
 
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def plot_matrix_with_labels(matrix, labels=None, cmap='bwr_r', value_format='{:.2f}', t=0, k=0):
+    D = matrix.shape[0]
+    if labels is None:
+        labels = [f"N{i}" if i!=k else f"{k} (you)" for i in range(D)]
+        print(f"labels : {labels}")
+
+    fig, ax = plt.subplots(figsize=(6, 6))
+
+    # Fixed color range so 0 is always visible
+    im = ax.imshow(matrix, cmap=cmap, aspect='equal', vmin=-2, vmax=2)
+
+    # Add colorbar with fixed ticks including 0
+    cbar = plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    cbar.set_label("Connection Strength", rotation=270, labelpad=15)
+    cbar.set_ticks(np.linspace(-2, 2, 5))
+
+    # Set ticks and labels
+    ax.set_xticks(np.arange(D))
+    ax.set_yticks(np.arange(D))
+    ax.set_xticklabels(labels)
+    ax.set_yticklabels(labels)
+
+    # Move x-axis labels to top
+    ax.xaxis.set_ticks_position('top')
+    ax.tick_params(top=True, bottom=False, labeltop=True, labelbottom=False)
+
+    # Rotate x labels for readability
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="left", rotation_mode="anchor")
+
+    # Add value labels
+    for i in range(D):
+        for j in range(D):
+            val = matrix[i, j]
+            ax.text(j, i, value_format.format(val),
+                    ha="center", va="center",
+                    color="black" if abs(val) < 1.4 else "white",
+                    fontsize=10, fontweight='bold')
+
+    ax.set_title("Directed Strength Matrix", pad=20)
+    plt.tight_layout()
+    plt.savefig(f"figures/figure{t}_{k}")
+
+
+
 # Example usage
 D = 5
 np.random.seed(1)
-matrix = np.random.uniform(-1, 1, (D, D))  # directional strengths (positive & negative)
-plot_directed_strength_graph(matrix, labels=[f"Node {i+1}" for i in range(D)], threshold=0.2)
+matrix = np.zeros((D,D))  # directional strengths (positive & negative)
+
+# plot_directed_strength_graph(matrix, labels=[f"Node {i+1}" for i in range(D)], threshold=0.2)
+plot_matrix_with_labels(matrix, t = 0, k = 1)
+

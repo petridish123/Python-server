@@ -5,7 +5,7 @@ from Shared import plot_directional_graph, plot_matrix_with_labels
 import pandas as pd
 
 class equation:
-    LAMBDA = .8
+    LAMBDA = .2
     ALPHA = .5
 
     def __init__(self, Ids): #ID matrix is a dict that maps ids to their matrix
@@ -69,17 +69,17 @@ class equation:
                 for j in self.ids:
                     if i == j:
                         continue
-                    # print("attempt")
-                    # print(allocations)
-                    s_i_j = allocations[self.t][i][str(j)] # How player i thinks about player j. Since all allocations are observable for now, it is as observed by k
-                    average_event = None
-                    e_score = self.ALPHA * self.calc_events(events,k,i,j)
-                    score = self.LAMBDA * (s_i_j + e_score) + (1-self.LAMBDA) * (self.matrices[prev][k][i-1, j-1])
-                    # print(self.matrices[prev][k])
-                    # print(f"score of {i} to {j} as observed by {k}: {score}")
+                    cur_allocations = allocations[self.t]
+                    t_score = 0
+                    if not (cur_allocations[i]["CAMP"] != cur_allocations[k]["CAMP"] or cur_allocations[k]["CAMP"] is None) or k == i:
+                        s_i_j = cur_allocations[i][str(j)]
+                        
+                        e_score = self.ALPHA * self.calc_events(events,k,i,j)
+                        t_score = self.LAMBDA * (s_i_j + e_score)
+                    
+
+                    score = t_score + (1-self.LAMBDA) * (self.matrices[prev][k][i-1, j-1])
                     self.matrices[self.t][k].matrix[i-1, j-1] = score
-            # print(f"Diff from prev and current: \nprev for {k}\n{str(self.matrices[prev][k])} \ncur for {k}\n{str(self.matrices[self.t][k])}")
-            # plot_directional_graph(self.matrices[self.t][k].matrix,t= self.t,k=k)
             plot_matrix_with_labels(self.matrices[self.t][k].matrix,t= self.t,k=k)
             
     
@@ -135,7 +135,7 @@ class equation:
                 if not t in pmatrix.reputations: # if there is no reputation for time t, create one
                     pmatrix.create_new_t_reputation(t)
                 reputation_ = self.reputation(k,i) # Supposed to be the reputation of player i as observed by player k
-                print(f"reputation of player {i} as observed by player {k} : {reputation_}") # I think this needs to be normalized
+                # print(f"reputation of player {i} as observed by player {k} : {reputation_}") # I think this needs to be normalized
                 pmatrix.reputations[t][i] = reputation_#self.reputation(k,i) # update the reputation belief of player k about player i
 
             
@@ -147,7 +147,7 @@ class equation:
 
         for i in self.ids: # Since this depends on the the beliefs being normallized, this cannot be combined but must happen afterwards
             reputations[i] = self.true_reputation(i,t)
-        print(f"before: {reputations}")
+        # print(f"before: {reputations}")
 
 
         """
@@ -163,17 +163,17 @@ class equation:
         # This will calculate the believed reputation of all players about all other players and then calculate the true reputation.
         # This function needs to create the new reputation slots in the player matrix
     def normalize_reputations(self, reputations): # Currently has the issue where the player whos matrix this is will also be normalized.... is that bad?
-        print(np.array(list(reputations.values())).flatten())
+        # print(np.array(list(reputations.values())).flatten())
         reputations_sum = np.sum(np.abs(np.array(list(reputations.values())).flatten())) # Gets the total of the reputations
 
 
         for x in reputations: # This loop puts the values [-0.5,0.5]
             new_x = reputations[ x ] / ( reputations_sum + 1e-9) #2*
-            print(f"new_x : {new_x}")
+            # print(f"new_x : {new_x}")
             reputations[x] = new_x
 
         rep_mean = np.mean(np.array(list(reputations.values())).flatten())
-        print(f"rep mean {rep_mean}")
+        # print(f"rep mean {rep_mean}")
         adjustment = 0.5 - rep_mean
 
         for x in reputations: # This loop makes sure that the values are [0,1]

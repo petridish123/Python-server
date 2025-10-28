@@ -54,9 +54,10 @@ class Server:
 
     async def handle_message(self, msg):
         msg = json.loads(msg.decode())
+        camp = None
         if "ID" in msg and "ALLOCATION" in msg:
-            if self.game.set_score(msg["ID"],msg["ALLOCATION"]):
-                
+            if "CAMP" in msg: camp = msg["CAMP"]
+            if self.game.set_score(msg["ID"],msg["ALLOCATION"], camp):
                 self.game.new_round()
                 self.t = self.game.round
                 await self.update_round.emit(round = self.t)

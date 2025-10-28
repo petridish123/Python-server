@@ -95,13 +95,13 @@ class game:
         self.round += 1
         self.scores[self.round] = {}
     
-    def set_score(self, player_ID_from, scores,):
+    def set_score(self, player_ID_from, scores,camp = None):
         if not self.round in self.scores:
             self.scores[self.round] = {}
         self.scores[self.round][player_ID_from] = {}
         for ID in scores:
             self.scores[self.round][player_ID_from][ID] = scores[ID]
-        
+        self.scores[self.round][player_ID_from]["CAMP"] = camp # Setting the camp
         if len(self.scores[self.round]) >= self.num_players:
             print("all allocation collected")
             return True
@@ -114,9 +114,6 @@ class game:
             f.writelines(json.dumps(self.scores))
 
     
-
-    def calculate_cur_score(self, ID):
-        pass
 
 
 
@@ -269,3 +266,10 @@ class player_matrix:
     
     def __str__(self):
         return str(self.matrix)
+    
+"""
+Todo:
+ - Turn the scores from a set of dictionaries to a pd dataframe when passing them into the equations (Qtserver and up) make sure to keep the camps
+ - when adding the allocations, also set scores[ID][camp] = msg[camp] or whatever it is :p
+
+"""

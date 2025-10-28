@@ -152,9 +152,7 @@ class QtWebsocket(QWidget):
                 pass
                 
         await self.socket.send(json.dumps({"REQUEST" : "CONNECT"}).encode())
-        # message = await self.socket.recv()
-        # print(message)
-        # await self.handle_message(message)
+
         while True:
             try:
                 message = await self.socket.recv()
@@ -182,21 +180,8 @@ class QtWebsocket(QWidget):
         print("Closing and cleaning up")
         if self.window and hasattr(self.window, "close"):
             self.window.close()
-        
         a0.accept()
 
-"""
-
-
-
-    def create_event(self):
-        if self.new_window is not None:
-            self.new_window.close()
-        print("attempting to create event window")
-        self.new_window = eventWindow(self.server.ID_PLAYERS, self)
-        self.new_window.show()
-
-"""
 
 
 
@@ -265,9 +250,6 @@ class campWindow(QWidget):
         self.mainwindow.clear_window()
         super().close()
         self.deleteLater()
-
-
-
 
 
 
