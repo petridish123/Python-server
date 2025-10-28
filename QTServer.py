@@ -125,6 +125,8 @@ class QTServer(QWidget):
         print("Closing and cleaning up")
         if hasattr(self.server, "_close"):
             asyncio.create_task(self.server._close())
+
+        self.server.game.save() # Saves in a json file
         self.server_task.cancel()
         a0.accept()
     
@@ -227,6 +229,9 @@ class eventWindow(QWidget):
         self.format_event()
         self.mainwindow.handle_new_event(self.data)
         self.mainwindow.clear_window()
+
+        
+
         super().close()
         self.deleteLater()
 

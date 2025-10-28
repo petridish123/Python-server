@@ -109,8 +109,19 @@ class game:
         return False
     
     def save(self):
+        """
+        This function will check to see if the path exists, then iterate until a new file can be written.
+        
+        """
         import json
-        with open("Save.json", "w") as f:
+        import os
+        i = 0
+        path = f"Save_data/Save_{i}.json"
+        while os.path.exists(path):
+            i += 1
+            path = f"Save_data/Save_{i}.json"
+         
+        with open(path, "w") as f:
             f.writelines(json.dumps(self.scores))
 
     
@@ -266,10 +277,4 @@ class player_matrix:
     
     def __str__(self):
         return str(self.matrix)
-    
-"""
-Todo:
- - Turn the scores from a set of dictionaries to a pd dataframe when passing them into the equations (Qtserver and up) make sure to keep the camps
- - when adding the allocations, also set scores[ID][camp] = msg[camp] or whatever it is :p
-
-"""
+   
