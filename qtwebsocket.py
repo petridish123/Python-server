@@ -1,11 +1,10 @@
 from PyQt6.QtWidgets import (
-    QApplication, QWidget, QPushButton, QLabel,
-    QLineEdit, QVBoxLayout, QGridLayout
+    QApplication, QWidget, QPushButton, QLabel, QGridLayout
 )
 import sys
-from PyQt6.QtCore import Qt
 
-from PyQt6.QtGui import QIcon
+
+
 import json
 import websockets
 from qasync import QEventLoop, asyncSlot

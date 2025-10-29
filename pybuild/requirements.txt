@@ -1,0 +1,6 @@
+# The requirements that will be installed using the installer
+numpy
+qasync
+websockets
+PyQt6
+Shared
