@@ -26,14 +26,16 @@ Social and economic success. This, we believe, will model real life
 so that we can find how people in poverty stay there and how they can 
 get out of poverty in the United States.
 
-# How the tool (is supposed to) works
+# Applications
 
-The tool consists of a server script (GameServer) found in the server directory, a shared script (game) found in the shared directory
-and a client script (qtwebsocket) found in the client directory.
+The reason this tool is being developed is to assist in the development of ai agents in the game GridHunt as described above.
 
-These three work together to create the client server connection and run the tool.
+We believe that there are 2 spaces that humans think in when playing the GridHunt game: Physical and Reputations.
 
-When the server is opened, it waits until X amount of people are connected, where X is the set number in the script.
-When X amount are connected the server then sends a start game message.
+These spaces can be described in many ways such as monetarily, and mentally repectively. After playing GridHunt nemerous times, we
+have found that people tend to act in their best interst to gain more money, but with respect to the reputations of others as percieved by themselves.
 
-In the future, this will implement a state machine, but so far this is not a feature.
+When designing bots, it is important that they not only observe the potential monetary benefits of an action, but also the reputation that they may gain.
+
+An objective of this study is to see if bots who think in the reputation space (using reputations and beliefs about other players) will be able to 
+maximize their reputation and monetary profit in the GridHunt game and also potentially find strategies to play this collaborative game.
