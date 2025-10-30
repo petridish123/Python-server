@@ -1,2 +1,5 @@
 /TEST
 /figures
+/dist
+/build
+setup_env*
