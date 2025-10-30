@@ -188,24 +188,11 @@ class equation:
 
 
 
-"""
-TODO:
-- get events in here :check:
-- finish the calculation
-- 
 
-I have all the data being passed in: allocations and events. Use the equations given by Jake to do the thing
-"""
-
-"""
-Questions:
-- what should the starting popularity be?
-
-"""
 
 """
 Remember that the allocations are formatted as
-{time: {Id:{allocations}... for all IDs} ... for each round}
+{time: {Id:{allocations}... for all IDs, "CAMP":camp_int} ... for each round}
 
 
 Ui_j ^ k (t) = lambda * [ (allocation i_j ^ k ) + alpha * (average event i_j I(k))] + (1-lambda) Ui_j ^ k (t-1)
